@@ -1,0 +1,156 @@
+# Compiled object files
+*.o
+*.obj
+*.lo
+*.slo
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Compiled source #
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.idb
+*.pdb
+
+# Installer logs
+*.msi
+*.log
+
+# OS-generated files #
+.DS_Store
+Thumbs.db
+
+# .NET Core/ASP.NET/Mono specific ignores
+## Ignore Visual Studio temporary files, build results, and
+## while keeping track of NuGet packages and user settings
+## via .editorconfig, global.json, NuGet.config, and related files
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (Mono Auto Generated)
+mono_crash.*
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# MSTest test Results
+[Tt]est[Rr]esult*
+[Bb]uild[Ll]og.*
+
+# .NET Core
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# StyleCop
+StyleCopReport.xml
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_i.h
+*_p.h
+*.ilk
+*.meta
+*.genruntime
+*.nupkg
+*.model.lk
+*.cache
+*.pdb
+
+# Visual Studio Code
+.vscode/
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Docker specific
+docker-compose.override.yml
+docker-compose.debug.yml
+docker-compose.*
+docker-compose.override.*
+*.dockerignore
+
+# Logs, database, and misc files
+*.log
+*.sql
+*.sqlite
+*.env
+
+# Temporary files
+*.tmp
+*.temp
+
+# Docker files
+**/Dockerfile
+.dockerignore
+docker-compose.yml
+
+# Ignore secrets file
+secrets.json
+
+# Rider project files
+.idea/
+.idea_modules/
+
+# JetBrains Rider files
+.idea/
+
+# Rider-specific files
+.idea/
+.idea_modules/
+
+# Windows crash logs
+*.stackdump
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows file-system
+Thumbs.db
+Desktop.ini
