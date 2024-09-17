@@ -1,0 +1,74 @@
+@startuml services
+
+package "services" {
+    interface IUserService {
+        + Task<User> RegisterUser(CreateUser user)
+        + Task<string> LoginUser(string email, string password)
+        + Task<bool> ResetPassword(string email)
+        + Task<User> UpdateProfile(Guid userId, CreateUser user)
+        + Task<User> GetUserProfile(Guid userId)
+    }
+
+    class UserService implements IUserService {
+        - IUserRepository _userRepository
+        - IValidation _validation
+        UserService(IUserRepository userRepository, IValidation validation)
+    }
+
+    interface IExpenseService {
+        + Task<Expense> AddExpense (Guid userId, CreateExpense expense)
+        + Task<List<Expense>> GetUserExpenses(Guid userId)
+        + Task<string> GetHighestSpendingCategory(Guid userId, string category)
+        + Task<string> GetMostExpensiveMonth(Guid userId, DateTime month)
+        + Task<bool> CheckRecurringExpense(Guid userId)
+    }
+
+    class ExpenseService implements IExpenseService {
+        - IExpenseRepository _expenseRepository
+        - IValidation _validation
+        ExpenseService(IExpenseRepository expenseRepository, IValidation validation)
+    }
+
+    interface IIncomeService {
+        + Task<Income> AddIncome(Guid userId, CreateIncome income)
+        + Task<List<Income>> GetUserIncomes(Guid userId)
+        + Task<string> GetMonthlyIncome(Guid userId, DateTime month)
+    }
+
+    class IncomeService implements IIncomeService {
+        - IIncomeRepository _incomeRepository
+        - IValidation _validation
+        IncomeService(IIncomeRepository incomeRepository, IValidation validation)
+    }
+
+    interface IBudgetService {
+        + Task<Budget> SetBudget(Guid userId, Budget budget)
+        + Task<Budget> GetBudgetUserByMonth(Guid userId, DateTime month)
+        + Task<bool> CheckBudgetStatus(Guid userId, DateTime month)
+    }
+
+    class BudgetService implements IBudgetService {
+        - IBudgetRepository _budgetRepository
+        - IValidation _validation
+        BudgetService(IBudgetRepository budgetRepository, IValidation validation)
+    }
+
+    interface IGoalService {
+        + Task<Goal> CreateGoal(Guid userId, CreateGoal goal)
+        + Task<List<Goal>> GetGoals(Guid userId)
+        + Task<bool> TrackGoalProgress(Guid userId, Guid goalId, decimal amount)
+    }
+    
+    class GoalService implements IGoalService {
+        - IGoalRepository _goalRepository
+        - IValidation _validation
+        GoalService(IGoalRepository goalRepository, IValidation validation)
+    }
+    
+    class NotificationService {
+        +SendBudgetAlert()
+        +SendGoalMilestoneNotification()
+    }
+}
+
+@enduml
