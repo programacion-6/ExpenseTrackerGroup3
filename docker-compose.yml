@@ -1,0 +1,45 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  web:
+    build: .
+    ports:
+      - "5000:80"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Host=db;Database=mydb;
+      - JWT_SECRET_KEY=your_secret_key
+      - CORS_POLICY=AllowAll
+    labels:
+      - "com.example.cors.enabled=true"
+      - "com.example.cors.allowed.origins=*"
+      - "com.example.cors.allowed.methods=GET,POST,PUT,DELETE"
+      - "com.example.cors.allowed.headers=Content-Type,Accept,Origin,User-Agent,DNT,Cache-Control,X-Mx-ReqToken,Keep-Alive,X-Requested-With,If-Modified-Since"
+      - "com.example.cors.exposed.headers=Content-Disposition"
+    volumes:
+      - ~/.vscode-server:/root/.vscode-server
+
+  swagger:
+
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8080:8080"
+    depends_on:
+      - web
+    environment:
+      - SWAGGER_JSON=/api/swagger/v1/swagger.json
+
+
+volumes:
+  db-data: 
