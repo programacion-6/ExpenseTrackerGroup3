@@ -1,0 +1,65 @@
+@startuml validations
+
+package "validations" {
+    interface IValidation<T> {
+        + void Validate(T item) 
+    }
+
+    class UserValidation implements IValidation {
+        + void Validate(User item)
+        - void ValidateName(string name)
+        - void ValidateEmail(string email)
+        - void ValidatePasswordHash(string passwordHash)
+    }
+
+    class ExpenseValidation implements IValidation {
+        + void Validate(Expense item)
+        - void ValidateAmount(decimal amount)
+        - void ValidateDescription(string description)
+        - void ValidateCategory(string category)
+    }
+
+    class IncomeValidation implements IValidation {
+        + void Validate(Income item)
+        - void ValidateAmount(decimal amount)
+        - void ValidateSource(string source)
+    }
+
+    class BudgetValidation implements IValidation {
+        + void Validate(Budget item)
+        - void ValidateMonth(DateTime month)
+        - void ValidateBudgetAmount(decimal budgetAmount)
+    }
+
+    class GoalValidation implements IValidation {
+        + void Validate(Goal item)
+        - void ValidateGoalAmount(decimal goalAmount)
+        - void ValidateDeadLine(DateTime deadLine)
+        - void ValidateCurrentAmount(decimal currentAmount)
+    }
+
+    package "exceptions" {
+        class CustomException {
+            + SeverityLevel : SeverityLevel
+            + ResolutionSuggestion : string 
+        }
+
+        CustomException <|-- UserException
+        CustomException <|-- ExpenseException
+        CustomException <|-- IncomeException 
+        CustomException <|-- BudgetException
+        CustomException <|-- GoalException
+
+        enum SeverityLevel {
+            Low
+            Medium
+            High 
+            Critical
+        }
+
+        CustomException --> SeverityLevel : uses
+    }
+}
+
+
+@enduml
