@@ -1,0 +1,67 @@
+@startuml domain
+
+package "domain" {
+    package "entities" {
+        class User {
+            + Id : Guid
+            + Name: string
+            + Email: string
+            + PasswordHash: string
+            + CreatedAt: DateTime
+        }
+
+        class Expense {
+            + Id : Guid
+            + UserId : Guid
+            + Amount : decimal
+            + Description : string
+            + Category : string
+            + CreatedAt : DateTime
+            + RecurringExpese : bool
+        }
+
+        class Income {
+            + Id : Guid
+            + UserId : Guid
+            + Amount : decimal
+            + Source : string
+            + CreatedAt : DateTime
+        }
+
+        class Budget {
+            + Id : Guid
+            + UserId : Guid
+            + Month : DateTime
+            + BudgetAmount : decimal
+        }
+
+        class Goal {
+            + Id : Guid
+            + UserId : Guid
+            + GoalAmount : decimal
+            + DeadLine : DateTime
+            + CurrentAmount : decimal
+            + CreatedAt : DateTime
+        }
+    }
+
+    !include dtos.puml
+
+    User -- ResponseUser
+    User -- CreateUser
+
+    Expense -- ResponseExpense
+    Expense -- CreateExpense
+
+    Income -- ResponseIncome
+    Income -- CreateIncome
+
+    Budget -- ResponseBudget
+    Budget -- CreateBudget
+
+    Goal -- ResponseGoal
+    Goal -- CreateGoal 
+}
+
+@enduml
+
