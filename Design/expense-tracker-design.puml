@@ -1,0 +1,37 @@
+@startuml expense-tracker-design
+
+title Expense tracker - Class diagram
+
+!include domain.puml 
+!include data.puml 
+!include validations.puml 
+!include repositories.puml
+!include services.puml 
+!include controllers.puml 
+
+UserService *-- IValidation
+ExpenseService *-- IValidation
+IncomeService *-- IValidation
+BudgetService *-- IValidation
+GoalService *-- IValidation
+
+UserRepository *-- DbConnection
+ExpenseRepository *-- DbConnection
+IncomeRepository *-- DbConnection
+BudgetRepository *-- DbConnection
+GoalRepository *-- DbConnection
+
+UserService *-- IUserRepository
+ExpenseService *-- IExpenseRepository
+IncomeService *-- IIncomeRepository
+BudgetService *-- IBudgetRepository
+GoalService *-- IGoalRepository
+
+UserController *-- IUserService
+ExpenseController *-- IExpenseService
+IncomeController *-- IIncomeService
+BudgetController *-- IBudgetService
+GoalController *-- IGoalService
+
+
+@enduml
