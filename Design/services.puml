@@ -3,11 +3,11 @@
 package "utils" {
     class PasswordHasher {
         + string HashPassword(string password)
-        + bool VerifyPassword(string Hashedpassword, string password)
+        + bool VerifyPassword(User user, string password)
     }
 
     class JwtTokenGenerator {
-        + string GenerateToken(Guid userId, string email)
+        + string GenerateToken(Guid userId, string email, string tokenType, TimeSpan expiration)
     }
 }
 
@@ -27,7 +27,8 @@ package "services" {
     interface IAuthService {
         + Task<User> RegisterUser(CreateUser user)
         + Task<string> LoginUser(string email, string password)
-        + Task<bool> ResetPassword(string email)
+        + Task<bool> RequestPasswordReset(string email)
+        + Task<bool> ResetPassword(string token, string newPassword)
     }
 
     class AuthService implements IAuthService {
