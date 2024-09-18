@@ -14,6 +14,9 @@ ExpenseService *-- IValidation
 IncomeService *-- IValidation
 BudgetService *-- IValidation
 GoalService *-- IValidation
+AuthService *-- IValidation
+AuthService *-- PasswordHasher
+AuthService *-- JwtTokenGenerator
 
 UserRepository *-- DbConnection
 ExpenseRepository *-- DbConnection
@@ -32,6 +35,6 @@ ExpenseController *-- IExpenseService
 IncomeController *-- IIncomeService
 BudgetController *-- IBudgetService
 GoalController *-- IGoalService
-
+AuthController *-- IAuthService
 
 @enduml

@@ -1,18 +1,40 @@
 @startuml services
 
+package "utils" {
+    class PasswordHasher {
+        + string HashPassword(string password)
+        + bool VerifyPassword(string Hashedpassword, string password)
+    }
+
+    class JwtTokenGenerator {
+        + string GenerateToken(Guid userId, string email)
+    }
+}
+
 package "services" {
     interface IUserService {
-        + Task<User> RegisterUser(CreateUser user)
-        + Task<string> LoginUser(string email, string password)
-        + Task<bool> ResetPassword(string email)
         + Task<User> UpdateProfile(Guid userId, CreateUser user)
         + Task<User> GetUserProfile(Guid userId)
     }
 
     class UserService implements IUserService {
         - IUserRepository _userRepository
+        - PasswordHasher _passwordHasher
         - IValidation _validation
-        UserService(IUserRepository userRepository, IValidation validation)
+        UserService(IUserRepository userRepository, IValidation validation, PasswordHasher passwordHasher)
+    }
+
+    interface IAuthService {
+        + Task<User> RegisterUser(CreateUser user)
+        + Task<string> LoginUser(string email, string password)
+        + Task<bool> ResetPassword(string email)
+    }
+
+    class AuthService implements IAuthService {
+        - IUserRepository _userRepository
+        - PasswordHasher _passwordHasher
+        - JwtTokenGenerator _jwtTokenGenerator
+        AuthService(IUserRepository userRepository, PasswordHasher passwordHasher, JwtTokenGenerator jwtTokenGenerator)
     }
 
     interface IExpenseService {
@@ -21,6 +43,8 @@ package "services" {
         + Task<string> GetHighestSpendingCategory(Guid userId, string category)
         + Task<string> GetMostExpensiveMonth(Guid userId, DateTime month)
         + Task<bool> CheckRecurringExpense(Guid userId)
+        + Task<bool> UpdateExpense(Guid expenseId, CreateExpense expense)
+        + Task<bool> DeleteExpense(Guid expenseId)
     }
 
     class ExpenseService implements IExpenseService {
@@ -33,6 +57,9 @@ package "services" {
         + Task<Income> AddIncome(Guid userId, CreateIncome income)
         + Task<List<Income>> GetUserIncomes(Guid userId)
         + Task<string> GetMonthlyIncome(Guid userId, DateTime month)
+        + Task<bool> UpdateIncome(Guid incomeId, CreateIncome income)
+        + Task<bool> DeleteIncome(Guid incomeId)
+        + Task<Income> GetIncomeById(Guid incomeId)
     }
 
     class IncomeService implements IIncomeService {
@@ -42,8 +69,10 @@ package "services" {
     }
 
     interface IBudgetService {
-        + Task<Budget> SetBudget(Guid userId, Budget budget)
+        + Task<Budget> AddBudget(Guid userId, CreateBudget budget)
         + Task<Budget> GetBudgetUserByMonth(Guid userId, DateTime month)
+        + Task<bool> UpdateBudget(Guid budgetId, CreateBudget budget)
+        + Task<bool> DeleteBudget(Guid budgetId)
         + Task<bool> CheckBudgetStatus(Guid userId, DateTime month)
     }
 
@@ -56,19 +85,19 @@ package "services" {
     interface IGoalService {
         + Task<Goal> CreateGoal(Guid userId, CreateGoal goal)
         + Task<List<Goal>> GetGoals(Guid userId)
+        + Task<List<Goal>> GetActiveGoals(Guid userId)
+        + Task<Goal> GetGoalById(Guid goalId)
         + Task<bool> TrackGoalProgress(Guid userId, Guid goalId, decimal amount)
+        + Task<bool> UpdateGoal(Guid goalId, CreateGoal goal)
+        + Task<bool> DeleteGoal(Guid goalId)
     }
-    
+
     class GoalService implements IGoalService {
         - IGoalRepository _goalRepository
         - IValidation _validation
         GoalService(IGoalRepository goalRepository, IValidation validation)
     }
-    
-    class NotificationService {
-        +SendBudgetAlert()
-        +SendGoalMilestoneNotification()
-    }
+
 }
 
 @enduml

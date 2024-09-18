@@ -32,7 +32,7 @@ package "repositories" {
     class ExpenseRepository implements IExpenseRepository {
         + Task<bool> CreateAsync(T item)
         + Task<bool> UpdateAsync(T item)
-        + Task<bool> DeleteAsync(T item)
+        + Task<bool> DeleteAsync(Guid id)
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
         + Task<string> GetHighestSpendingCategoryByUserId(Guid userId, string category)
@@ -46,7 +46,7 @@ package "repositories" {
     class IncomeRepository implements IIncomeRepository {
         + Task<bool> CreateAsync(T item)
         + Task<bool> UpdateAsync(T item)
-        + Task<bool> DeleteAsync(T item)
+        + Task<bool> DeleteAsync(Guid id)
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
         + Task<string> GetMonthlyIncomeByUserId(Guid userId, DateTime month)
@@ -59,7 +59,7 @@ package "repositories" {
     class BudgetRepository implements IBudgetRepository {
         + Task<bool> CreateAsync(T item)
         + Task<bool> UpdateAsync(T item)
-        + Task<bool> DeleteAsync(T item)
+        + Task<bool> DeleteAsync(Guid id)
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
         + Task<string> GetMonthlyBudgetByUserId(Guid userId, DateTime month)
@@ -73,7 +73,7 @@ package "repositories" {
     class GoalRepository implements IGoalRepository {
         + Task<bool> CreateAsync(T item)
         + Task<bool> UpdateAsync(T item)
-        + Task<bool> DeleteAsync(T item)
+        + Task<bool> DeleteAsync(Guid id)
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
         + Task<List<Goal>> GetActiveGoalsByUserId(Guid userId)
