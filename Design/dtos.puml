@@ -23,6 +23,7 @@ package "DTOs" {
         + Amount : decimal
         + Description : string
         + Category : string
+        + Date: DateTime
         + CreatedAt : DateTime
         + FromDomain(Expense expense): ResponseExpense
     }
@@ -31,6 +32,7 @@ package "DTOs" {
         + Amount : decimal
         + Description : string
         + Category : string
+        + Date: DateTime
         + CreatedAt : DateTime
         + ToDomain(): Expense
     }
@@ -56,12 +58,14 @@ package "DTOs" {
         + UserId : Guid
         + Month : DateTime
         + BudgetAmount : decimal
+        + AlertThreshold : decimal
         + FromDomain(Budget budget): ResponseBudget
     }
 
     class CreateBudget {
         + Month : DateTime
         + BudgetAmount : decimal
+        + AlertThreshold : decimal
         + ToDomain(): Budget
     }
 

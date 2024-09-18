@@ -4,7 +4,7 @@ package "repositories" {
     interface IRepository<T> {
         + Task<bool> CreateAsync(T item)
         + Task<bool> UpdateAsync(T item)
-        + Task<bool> DeleteAsync(T item)
+        + Task<bool> DeleteAsync(Guid id)
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
     }
@@ -18,17 +18,15 @@ package "repositories" {
     class UserRepository implements IUserRepository {
         + Task<bool> CreateAsync(T item)
         + Task<bool> UpdateAsync(T item)
-        + Task<bool> DeleteAsync(T item)
+        + Task<bool> DeleteAsync(Guid id)
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
-        + Task<bool> PasswordReset(string email)
-        + Task<User> GetProfileByIdAsync(Guid id)
         + Task<bool> UpdateProfileAsync(User user)
     }
 
     interface IExpenseRepository extends IRepository {
-        + task<string> GetHighestSpendingCategoryByUserId(Guid userId, string category)
-        + task<string> GetMostExpensiveMonthByUserId(Guid userId, DateTime month)
+        + task<string> GetHighestSpendingCategoryByUserId(Guid userId)
+        + task<DateTime> GetMostExpensiveMonthByUserId(Guid userId)
     }
 
     class ExpenseRepository implements IExpenseRepository {
@@ -38,7 +36,7 @@ package "repositories" {
         + Task<T> GetByIdAsync(Guid Id)
         + Task<List<T>> GetAllAsync()
         + Task<string> GetHighestSpendingCategoryByUserId(Guid userId, string category)
-        + Task<string> GetMostExpensiveMonthByUserId(Guid userId, DateTime month)
+        + Task<DateTime> GetMostExpensiveMonthByUserId(Guid userId)
     }
 
     interface IIncomeRepository extends IRepository {
@@ -70,7 +68,6 @@ package "repositories" {
     interface IGoalRepository extends IRepository {
         + Task<List<Goal>> GetActiveGoalsByUserId(Guid userId)
         + Task<decimal> GetGoalProgress(Guid goalId)
-        + Task<bool> UpdateGoalProgress(Guid goalId, decimal amount)
     }
 
     class GoalRepository implements IGoalRepository {
@@ -81,7 +78,6 @@ package "repositories" {
         + Task<List<T>> GetAllAsync()
         + Task<List<Goal>> GetActiveGoalsByUserId(Guid userId)
         + Task<decimal> GetGoalProgress(Guid goalId)
-        + Task<bool> UpdateGoalProgress(Guid goalId, decimal amount)
     }
 }
 

@@ -16,6 +16,7 @@ package "domain" {
             + Amount : decimal
             + Description : string
             + Category : string
+            + Date: DateTime
             + CreatedAt : DateTime
             + RecurringExpese : bool
         }
@@ -33,6 +34,7 @@ package "domain" {
             + UserId : Guid
             + Month : DateTime
             + BudgetAmount : decimal
+            + AlertThreshold : decimal
         }
 
         class Goal {
