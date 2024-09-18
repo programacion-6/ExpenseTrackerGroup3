@@ -17,7 +17,8 @@ package "controllers" {
         + AuthController(IAuthService authService)
         + Task<ActionResult> RegisterUser(CreateUser user)
         + Task<ActionResult> LoginUser(string email, string password)
-        + Task<ActionResult> ResetPassword(string email)
+        + Task<ActionResult> RequestPasswordReset(string email)
+        + Task<ActionResult> PasswordReset(string token, string newPassword)
     }
 
     class IncomeController extends BaseController {
