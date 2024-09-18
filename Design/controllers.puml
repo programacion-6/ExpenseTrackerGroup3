@@ -10,7 +10,13 @@ package "controllers" {
         + UserController(IUserService userService)
         + Task<ActionResult> GetProfile(Guid userId)
         + Task<ActionResult> UpdateProfile(Guid userId, CreateUser user)
+    }
+
+    class AuthController extends BaseController {
+        - IAuthService _authService
+        + AuthController(IAuthService authService)
         + Task<ActionResult> RegisterUser(CreateUser user)
+        + Task<ActionResult> LoginUser(string email, string password)
         + Task<ActionResult> ResetPassword(string email)
     }
 
@@ -18,17 +24,24 @@ package "controllers" {
         - IIncomeService _incomeService
         + IncomeController(IIncomeService incomeService)
         + Task<ActionResult> AddIncome(Guid userId, CreateIncome income)
-        + Task<ActionResult> GetUserIncomes(Guid userId)
+        + Task<ActionResult> GetUserIncomeById(Guid userId)
         + Task<ActionResult> GetMonthlyIncome(Guid userId, DateTime month)
+        + Task<ActionResult> UpdateIncome(Guid userId, CreateIncome income)
+        + Task<ActionResult> DeleteIncome(Guid incomeId)
     }
 
     class ExpenseController extends BaseController {
         - IExpenseService expenseService
         + ExpenseController(IExpenseService expenseService)
         + Task<ActionResult> AddExpense(Guid userId, CreateExpense expense)
+        + Task<ActionResult> GetUserExpenses(Guid userId, DateTime month, string category)
+        + Task<ActionResult> GetUserExpensesById(Guid userId)
+        + Task<ActionResult> UpdateExpense(Guid userId, CreateExpense expense)
+        + Task<ActionResult> DeleteExpense(Guid expenseId)
         + Task<ActionResult> GetHighestExpenseCategory(Guid userId, string category)
         + Task<ActionResult> GetMostExpensiveMonth(Guid userId, DateTime month)
         + Task<ActionResult> CheckRecurringExpense(Guid userId)
+        + Task<ActionResult> GetExpenseById(Guid expenseId)
     }
 
     class BudgetController extends BaseController {
@@ -37,6 +50,7 @@ package "controllers" {
         + Task<ActionResult> AddBudget(Guid userId, CreateBudget budget)
         + Task<ActionResult> UpdateBudget(Guid userId, CreateBudget budget)
         + Task<ActionResult> GetMonthlyBudget(Guid id, DateTime month)
+        + Task<ActionResult> GetBudgetRemaining(Guid userId)
     }
 
     class GoalController extends BaseController {
@@ -46,7 +60,7 @@ package "controllers" {
         + Task<ActionResult> UpdateGoal(Guid userId, CreateGoal goal)
         + Task<ActionResult> GetActiveGoals(Guid userId)
         + Task<ActionResult> GetGoalProgress(Guid goalId)
-        + Task<ActionResult> UpdateGoalProgress(Guid goalId, CreateGoal goal)
+        + Task<ActionResult> UpdateGoalProgress(Guid goalId, decimal amount)
     }
 }
 
