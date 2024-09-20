@@ -1,4 +1,5 @@
 using ExpenseTrackerGroup3.Infraestructure;
+using ExpenseTrackerGroup3.RequestPipeline;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +11,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
+{
+    app.InitializeDatabase();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
