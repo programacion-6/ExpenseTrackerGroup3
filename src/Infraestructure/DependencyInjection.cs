@@ -1,5 +1,3 @@
-
-
 using ExpenseTrackerGroup3.Data;
 
 namespace ExpenseTrackerGroup3.Infraestructure;
