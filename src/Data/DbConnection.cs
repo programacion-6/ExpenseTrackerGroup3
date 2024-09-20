@@ -1,35 +1,24 @@
 using System.Data;
 
+using Microsoft.Extensions.Options;
+
 using Npgsql;
 
 namespace ExpenseTrackerGroup3.Data;
 
-public class DbConnection : IDisposable
+public class DbConnection : IDbConnectionFactory
 {
-    private readonly string _connectionString;
-    private readonly IDbConnection _dbConnection;
+    private readonly DatabaseOptions _options;
 
-    public DbConnection(string connectionString)
+    public DbConnection(IOptions<DatabaseOptions> options)
     {
-        _connectionString = connectionString;
-        _dbConnection = new NpgsqlConnection(_connectionString);
+        _options = options.Value;
     }
 
-    public IDbConnection CreateConnection()
+    public async Task<IDbConnection> CreateConnectionAsyn()
     {
-        if (_dbConnection.State != ConnectionState.Open)
-        {
-            _dbConnection.Open();
-        }
-        return _dbConnection;
-    }
-
-    public void Dispose()
-    {
-        if (_dbConnection != null && _dbConnection.State == ConnectionState.Open)
-        {
-            _dbConnection.Close();
-        }
-        _dbConnection?.Dispose();
+        var connection = new NpgsqlConnection(_options.DefaultConnection);
+        await connection.OpenAsync();
+        return connection;
     }
 }
