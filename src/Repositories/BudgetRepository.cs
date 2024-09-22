@@ -22,7 +22,7 @@ public class BudgetRepository : IBudgetRepository
             INSERT INTO Budget (Id, UserId, Month, BudgetAmount, AlertThreshold)
             VALUES (@Id, @UserId, @Month, @BudgetAmount, @AlertThreshold)";
 
-        using var connection = await _dbConnection.CreateConnectionAsyn();
+        using var connection = await _dbConnection.CreateConnectionAsync();
         var affectedRows = await connection.ExecuteAsync(sql, item);
         return affectedRows > 0;
     }
@@ -31,7 +31,7 @@ public class BudgetRepository : IBudgetRepository
     {
         const string sql = "DELETE FROM Budget WHERE Id = @Id";
 
-        using var connection = await _dbConnection.CreateConnectionAsyn();
+        using var connection = await _dbConnection.CreateConnectionAsync();
         var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
         return affectedRows > 0;
     }
@@ -40,7 +40,7 @@ public class BudgetRepository : IBudgetRepository
     {
         const string sql = "SELECT * FROM Budget";
 
-        using var connection = await _dbConnection.CreateConnectionAsyn();
+        using var connection = await _dbConnection.CreateConnectionAsync();
         return await connection.QueryAsync<Budget>(sql);
     }
 
@@ -48,7 +48,7 @@ public class BudgetRepository : IBudgetRepository
     {
         const string sql = "SELECT * FROM Budget WHERE Id = @Id";
 
-        using var connection = await _dbConnection.CreateConnectionAsyn();
+        using var connection = await _dbConnection.CreateConnectionAsync();
         return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { Id = id });
     }
 
@@ -58,7 +58,7 @@ public class BudgetRepository : IBudgetRepository
             SELECT * FROM Budget
             WHERE UserId = @UserId AND date_trunc('month', Month) = date_trunc('month', @Month)";
 
-        using var connection = await _dbConnection.CreateConnectionAsyn();
+        using var connection = await _dbConnection.CreateConnectionAsync();
         return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { UserId = userId, Month = month });
     }
 
@@ -69,7 +69,7 @@ public class BudgetRepository : IBudgetRepository
             SET UserId = @UserId, Month = @Month, BudgetAmount = @BudgetAmount, AlertThreshold = @AlertThreshold
             WHERE Id = @Id";
 
-        using var connection = await _dbConnection.CreateConnectionAsyn();
+        using var connection = await _dbConnection.CreateConnectionAsync();
         var affectedRows = await connection.ExecuteAsync(sql, item);
         return affectedRows > 0;
     }
