@@ -53,9 +53,13 @@ public class UserRepository : IUserRepository
         return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Id = id });
     }
 
-    public Task<bool> ResetPassword(string email)
+    public async Task<bool> ResetPassword(string email)
     {
-        throw new NotImplementedException();
+        const string sql = "SELECT COUNT(1) FROM User WHERE Email = @Email";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        var userExists = await connection.ExecuteScalarAsync<bool>(sql, new { Email = email });
+        return userExists;
     }
 
     public async Task<bool> UpdateAsync(User item)
