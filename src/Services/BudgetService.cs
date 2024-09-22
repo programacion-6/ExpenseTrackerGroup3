@@ -10,11 +10,13 @@ public class BudgetService : IBudgetService
 {
     private readonly IBudgetRepository _budgetRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IExpenseRepository _expenseRepository;
 
-    public BudgetService(IBudgetRepository budgetRepository, IUserRepository userRepository)
+    public BudgetService(IBudgetRepository budgetRepository, IUserRepository userRepository, IExpenseRepository expenseRepository)
     {
         _budgetRepository = budgetRepository;
         _userRepository = userRepository;
+        _expenseRepository = expenseRepository;
     }
 
     public async Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget)
@@ -38,9 +40,20 @@ public class BudgetService : IBudgetService
         return newBudget;
     }
 
-    public Task<bool> CheckBudgetStatusAsync(Guid userId, DateTime month)
+    public async Task<bool> CheckBudgetStatusAsync(Guid userId, DateTime month)
     {
-        throw new NotImplementedException();
+        var budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, month);
+
+        if (budget == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, month) ?? new Expense { Amount = 0 };
+
+        var totalExpenses = expenses.Amount;
+
+        return totalExpenses >= (budget.BudgetAmount * budget.AlertThreshold);
     }
 
     public async Task<bool> DeleteBudgetAsync(Guid budgetId)
@@ -77,7 +90,8 @@ public class BudgetService : IBudgetService
             throw new ArgumentException("Budget user not found");
         }
 
-        
+        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth) ?? new Expense { Amount = 0 };
+        return budget.BudgetAmount - expenses.Amount;
     }
 
     public async Task<bool> UpdateBudgetAsync(Guid budgetId, CreateBudget budget)
@@ -86,7 +100,7 @@ public class BudgetService : IBudgetService
 
         if (existingBudget == null)
         {
-            return false;
+            throw new ArgumentException("User not exists");
         }
 
         existingBudget.Month = budget.Month;
