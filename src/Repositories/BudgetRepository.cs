@@ -2,7 +2,7 @@ using Dapper;
 
 using Domain.Entities;
 
-using ExpenseTrackerGroup3.Data;
+using ExpenseTrackerGroup3.Data.Interfaces;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 
 namespace ExpenseTrackerGroup3.Repositories;
