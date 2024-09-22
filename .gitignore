@@ -116,7 +116,6 @@ docker-compose.override.*
 
 # Logs, database, and misc files
 *.log
-*.sql
 *.sqlite
 *.env
 
