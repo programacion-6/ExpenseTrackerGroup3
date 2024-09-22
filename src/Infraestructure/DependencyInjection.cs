@@ -3,6 +3,8 @@ using ExpenseTrackerGroup3.Data.Concretes;
 using ExpenseTrackerGroup3.Data.Interfaces;
 using ExpenseTrackerGroup3.Repositories;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
+using ExpenseTrackerGroup3.Services;
+using ExpenseTrackerGroup3.Services.Interfaces;
 
 namespace ExpenseTrackerGroup3.Infraestructure;
 
@@ -12,7 +14,8 @@ public static class DependencyInjection
     {
         services.
             AddDatabase(configuration)
-            .AddRepositories();
+            .AddRepositories()
+            .AddServices();
         return services;
     }
 
@@ -26,11 +29,16 @@ public static class DependencyInjection
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        // Here ned to be others repositories for inyection 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
         services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
+        return services;
+    }
+
+    private static IServiceCollection AddServices(this IServiceCollection services)
+    {
+        services.AddScoped<IBudgetService, BudgetService>();
         return services;
     }
 }
