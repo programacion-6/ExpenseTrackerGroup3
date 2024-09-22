@@ -1,10 +1,12 @@
 using System.Data;
 
+using ExpenseTrackerGroup3.Data.Interfaces;
+
 using Microsoft.Extensions.Options;
 
 using Npgsql;
 
-namespace ExpenseTrackerGroup3.Data;
+namespace ExpenseTrackerGroup3.Data.Concretes;
 
 public class DbConnection : IDbConnectionFactory
 {

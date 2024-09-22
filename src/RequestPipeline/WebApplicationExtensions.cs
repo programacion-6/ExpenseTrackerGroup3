@@ -1,4 +1,4 @@
-using ExpenseTrackerGroup3.Data;
+using ExpenseTrackerGroup3.Data.Interfaces;
 
 namespace ExpenseTrackerGroup3.RequestPipeline;
 
@@ -6,14 +6,13 @@ public static class WebApplicationExtensions
 {
     public static WebApplication InitializeDatabase(this WebApplication app)
     {
-        var dbConnection = app.Services.GetRequiredService<IDbConnectionFactory>();
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
 
-        using var connection = dbConnection.CreateConnectionAsync().Result;
+            dbInitializer.InitializeDatabase();
 
-        var connectionString = connection.ConnectionString;
-
-        DbInitializer.Initializer(connectionString);
-
-        return app;
+            return app;
+        }
     }
 }

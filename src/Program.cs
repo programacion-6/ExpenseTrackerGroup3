@@ -11,9 +11,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddInfrastructure(builder.Configuration);
 
 var app = builder.Build();
-{
-    app.InitializeDatabase();
-}
+app.InitializeDatabase();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

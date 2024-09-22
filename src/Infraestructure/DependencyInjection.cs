@@ -1,4 +1,6 @@
 using ExpenseTrackerGroup3.Data;
+using ExpenseTrackerGroup3.Data.Concretes;
+using ExpenseTrackerGroup3.Data.Interfaces;
 using ExpenseTrackerGroup3.Repositories;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 
@@ -18,6 +20,7 @@ public static class DependencyInjection
     {
         services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.ConnectionStrings));
         services.AddScoped<IDbConnectionFactory, DbConnection>();
+        services.AddScoped<IDbInitializer, DbInitializer>();
         return services;
     }
 
