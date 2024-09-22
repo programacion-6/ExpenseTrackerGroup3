@@ -1,48 +1,48 @@
 CREATE TABLE
-    IF NOT EXISTS "User" (
-        "Id" UUID PRIMARY KEY,
-        "Name" VARCHAR(50) NOT NULL,
-        "Email" VARCHAR(50) NOT NULL,
-        "PasswordHash" VARCHAR(60) NOT NULL,
-        "CreatedAt" DATE NOT NULL
+    IF NOT EXISTS "user" (
+        id UUID PRIMARY KEY,
+        name VARCHAR(50) NOT NULL,
+        email VARCHAR(50) NOT NULL,
+        passwordHash VARCHAR(60) NOT NULL,
+        createdAt DATE NOT NULL
     );
 
 CREATE TABLE
-    IF NOT EXISTS "Expense" (
-        "Id" UUID PRIMARY KEY,
-        "UserId" UUID REFERENCES "User"("Id") ON DELETE CASCADE,
-        "Amount" DECIMAL(10, 2) NOT NULL,
-        "Description" VARCHAR(255) NOT NULL,
-        "Category" VARCHAR(50) NOT NULL,
-        "Date" DATE NOT NULL,
-        "CreatedAt" DATE NOT NULL,
-        "RecurringExpense" BOOLEAN NOT NULL
+    IF NOT EXISTS Expense (
+        id UUID PRIMARY KEY,
+        userId UUID REFERENCES "user"(Id) ON DELETE CASCADE,
+        amount DECIMAL(10, 2) NOT NULL,
+        description VARCHAR(255) NOT NULL,
+        category VARCHAR(50) NOT NULL,
+        date DATE NOT NULL,
+        createdAt DATE NOT NULL,
+        recurringExpense BOOLEAN NOT NULL
     );
 
 CREATE TABLE
-    IF NOT EXISTS "Income" (
-        "Id" UUID PRIMARY KEY,
-        "UserId" UUID REFERENCES "User"("Id") ON DELETE CASCADE,
-        "Amount" DECIMAL(10, 2) NOT NULL,
-        "Source" VARCHAR(50) NOT NULL,
-        "CreatedAt" DATE NOT NULL
+    IF NOT EXISTS Income (
+        id UUID PRIMARY KEY,
+        userId UUID REFERENCES "user"(Id) ON DELETE CASCADE,
+        amount DECIMAL(10, 2) NOT NULL,
+        source VARCHAR(50) NOT NULL,
+        createdAt DATE NOT NULL
     );
 
 CREATE TABLE
-    IF NOT EXISTS "Budget" (
-        "Id" UUID PRIMARY KEY,
-        "UserId" UUID REFERENCES "User"("Id") ON DELETE CASCADE,
-        "Month" DATE NOT NULL,
-        "BudgetAmount" DECIMAL(10, 2) NOT NULL,
-        "AlertThreshold" DECIMAL(10, 2) NULL
+    IF NOT EXISTS Budget (
+        id UUID PRIMARY KEY,
+        userId UUID REFERENCES "user"(Id) ON DELETE CASCADE,
+        month DATE NOT NULL,
+        budgetAmount DECIMAL(10, 2) NOT NULL,
+        alertThreshold DECIMAL(10, 2) NULL
     );
 
 CREATE TABLE
-    IF NOT EXISTS "Goal" (
-        "Id" UUID PRIMARY KEY,
-        "UserId" UUID REFERENCES "User"("Id") ON DELETE CASCADE,
-        "GoalAmount" DECIMAL(10, 2) NOT NULL,
-        "DeadLine" DATE NOT NULL,
-        "CurrentAmount" DECIMAL(10, 2) NOT NULL,
-        "CreatedAt" DATE NOT NULL
+    IF NOT EXISTS Goal (
+        id UUID PRIMARY KEY,
+        userId UUID REFERENCES "user"(Id) ON DELETE CASCADE,
+        goalAmount DECIMAL(10, 2) NOT NULL,
+        deadLine DATE NOT NULL,
+        currentAmount DECIMAL(10, 2) NOT NULL,
+        createdAt DATE NOT NULL
     );
