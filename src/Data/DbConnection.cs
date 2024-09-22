@@ -15,7 +15,7 @@ public class DbConnection : IDbConnectionFactory
         _options = options.Value;
     }
 
-    public async Task<IDbConnection> CreateConnectionAsyn()
+    public async Task<IDbConnection> CreateConnectionAsync()
     {
         var connection = new NpgsqlConnection(_options.DefaultConnection);
         await connection.OpenAsync();

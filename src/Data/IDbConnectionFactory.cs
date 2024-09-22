@@ -4,5 +4,5 @@ namespace ExpenseTrackerGroup3.Data;
 
 public interface IDbConnectionFactory 
 {
-    Task<IDbConnection> CreateConnectionAsyn();
+    Task<IDbConnection> CreateConnectionAsync();
 }
