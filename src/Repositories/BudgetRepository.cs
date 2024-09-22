@@ -44,7 +44,7 @@ public class BudgetRepository : IBudgetRepository
         return await connection.QueryAsync<Budget>(sql);
     }
 
-    public async Task<Budget> GetByIdAsync(Guid id)
+    public async Task<Budget?> GetByIdAsync(Guid id)
     {
         const string sql = "SELECT * FROM Budget WHERE Id = @Id";
 
@@ -52,9 +52,14 @@ public class BudgetRepository : IBudgetRepository
         return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { Id = id });
     }
 
-    public Task<Budget> GetMonthlyBudgetByUserId(Guid userId, DateTime month)
+    public async Task<Budget?> GetMonthlyBudgetByUserId(Guid userId, DateTime month)
     {
-        throw new NotImplementedException();
+        const string sql = @"
+            SELECT * FROM Budget
+            WHERE UserId = @UserId AND date_trunc('month', Month) = date_trunc('month', @Month)";
+
+        using var connection = await _dbConnection.CreateConnectionAsyn();
+        return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { UserId = userId, Month = month });
     }
 
     public async Task<bool> UpdateAsync(Budget item)
