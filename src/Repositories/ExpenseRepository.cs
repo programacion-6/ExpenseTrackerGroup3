@@ -20,7 +20,7 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<bool> CreateAsync(Expense item)
     {
         const string query = @"
-        INSERT INTO ""Expense"" (""Id"", ""UserId"", ""Amount"", ""Description"", ""Category"", ""Date"", ""CreatedAt"", ""RecurringExpense"")
+        INSERT INTO Expense (Id, UserId, Amount, Description, Category, Date, CreatedAt, RecurringExpense)
         VALUES (@Id, @UserId, @Amount, @Description, @Category, @Date, @CreatedAt, @RecurringExpense)";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
@@ -31,7 +31,7 @@ public class ExpenseRepository : IExpenseRepository
 
     public async Task<bool> DeleteAsync(Guid id)
     {
-        const string query = @"DELETE FROM ""Expense"" WHERE ""Id"" = @Id";
+        const string query = "DELETE FROM Expense WHERE Id = @Id";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
         var affectedRows = await connection.ExecuteAsync(query, new { Id = id });
@@ -41,7 +41,7 @@ public class ExpenseRepository : IExpenseRepository
 
     public async Task<IEnumerable<Expense>> GetAllAsync()
     {
-        const string query = @"SELECT * FROM ""Expense""";
+        const string query = "SELECT * FROM Expense";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
 
@@ -50,7 +50,7 @@ public class ExpenseRepository : IExpenseRepository
 
     public async Task<Expense?> GetByIdAsync(Guid id)
     {
-        const string query = @"SELECT * FROM ""Expense"" WHERE ""Id"" = @Id";
+        const string query = "SELECT * FROM Expense WHERE Id = @Id";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
 
@@ -60,11 +60,11 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<string?> GetHighestSpendingCategoryByUserId(Guid userId)
     {
         const string query = @"
-        SELECT ""Category"", 
-        SUM(""Amount"") AS TotalSpent
-        FROM ""Expense""
-        WHERE ""UserId"" = @UserId
-        GROUP BY ""Category""
+        SELECT Category, 
+        SUM(Amount) AS TotalSpent
+        FROM Expense
+        WHERE UserId = @UserId
+        GROUP BY Category
         ORDER BY TotalSpent DESC
         LIMIT 1;
     ";
@@ -76,10 +76,10 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<DateTime> GetMostExpensiveMonthByUserId(Guid userId)
     {
         const string query = @"
-        SELECT DATE_TRUNC('month', ""Date"") AS Month, 
-        SUM(""Amount"") AS TotalSpent
-        FROM ""Expense""
-        WHERE ""UserId"" = @UserId
+        SELECT DATE_TRUNC('month', Date) AS Month, 
+        SUM(Amount) AS TotalSpent
+        FROM Expense
+        WHERE UserId = @UserId
         GROUP BY Month
         ORDER BY TotalSpent DESC
         LIMIT 1;
@@ -92,15 +92,15 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<bool> UpdateAsync(Expense item)
     {
         const string query = @"
-        UPDATE ""Expense""
-        SET ""UserId"" = @UserId, 
-            ""Amount"" = @Amount, 
-            ""Description"" = @Description, 
-            ""Category"" = @Category, 
-            ""Date"" = @Date, 
-            ""CreatedAt"" = @CreatedAt, 
-            ""RecurringExpense"" = @RecurringExpense
-        WHERE ""Id"" = @Id;
+        UPDATE Expense
+        SET UserId = @UserId, 
+            Amount = @Amount, 
+            Description = @Description, 
+            Category = @Category, 
+            Date = @Date, 
+            CreatedAt = @CreatedAt, 
+            RecurringExpense = @RecurringExpense
+        WHERE Id = @Id;
     ";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
