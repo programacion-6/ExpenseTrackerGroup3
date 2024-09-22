@@ -26,8 +26,9 @@ public static class DependencyInjection
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
-        services.AddScoped<IUserRepository, UserRepository>();
         // Here ned to be others repositories for inyection 
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IBudgetRepository, BudgetRepository>();
 
         return services;
     }
