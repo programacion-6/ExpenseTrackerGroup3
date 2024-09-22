@@ -73,17 +73,17 @@ public class ExpenseRepository : IExpenseRepository
         return await connection.QueryFirstOrDefaultAsync<string>(query, new { UserId = userId });
     }
 
-    public async Task<Expense?> GetMonthlyExpensesAsync(Guid userId, DateTime month)
+    public async Task<IEnumerable<Expense?>> GetMonthlyExpensesAsync(Guid userId, DateTime month)
     {
         const string sql = @"
-            SELECT SUM(Amount) as Amount
-            FROM Expenses
-            WHERE UserId = @UserId AND date_trunc('month', Date) = date_trunc('month', @Month)";
+        SELECT Id, UserId, Amount, Date, Description
+        FROM Expenses
+        WHERE UserId = @UserId AND date_trunc('month', Date) = date_trunc('month', @Month)";
 
-        var connection = await _dbConnection.CreateConnectionAsync();
-        var totalExpenses = await connection.QuerySingleOrDefaultAsync<Expense>(sql, new { UserId = userId, Month = month });
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        var expenses = await connection.QueryAsync<Expense>(sql, new { UserId = userId, Month = month });
 
-        return totalExpenses;
+        return expenses;
     }
 
     public async Task<DateTime> GetMostExpensiveMonthByUserId(Guid userId)
