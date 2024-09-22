@@ -29,6 +29,7 @@ public static class DependencyInjection
         // Here ned to be others repositories for inyection 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBudgetRepository, BudgetRepository>();
+        services.AddScoped<IExpenseRepository, ExpenseRepository>();
 
         return services;
     }
