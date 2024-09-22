@@ -21,6 +21,12 @@ public class BudgetService : IBudgetService
 
     public async Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget)
     {
+        var user = await _userRepository.GetByIdAsync(userId);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
         var newBudget = new Budget
         {
             Id = Guid.NewGuid(),
@@ -49,9 +55,8 @@ public class BudgetService : IBudgetService
             throw new ArgumentException("User not found");
         }
 
-        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, month) ?? new Expense { Amount = 0 };
-
-        var totalExpenses = expenses.Amount;
+        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, month);
+        var totalExpenses = expenses?.Sum(e => e?.Amount) ?? 0;
 
         return totalExpenses >= (budget.BudgetAmount * budget.AlertThreshold);
     }
@@ -87,11 +92,13 @@ public class BudgetService : IBudgetService
 
         if (budget == null)
         {
-            throw new ArgumentException("Budget user not found");
+            throw new ArgumentException("Budget not found for the current month");
         }
 
-        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth) ?? new Expense { Amount = 0 };
-        return budget.BudgetAmount - expenses.Amount;
+        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth);
+        var totalExpenses = expenses?.Sum(e => e?.Amount) ?? 0;
+
+        return budget.BudgetAmount - totalExpenses;
     }
 
     public async Task<bool> UpdateBudgetAsync(Guid budgetId, CreateBudget budget)
