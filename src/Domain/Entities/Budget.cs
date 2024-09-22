@@ -4,9 +4,9 @@ namespace Domain.Entities;
 
 public class Budget
 {
-  public Guid Id { get; set; }
-  public Guid UserId { get; set; }
-  public DateTime Month { get; set; }
-  public decimal BudgetAmount { get; set; }
-  public decimal AlertThreshold { get; set; }
+  public required Guid Id { get; set; }
+  public required Guid UserId { get; set; }
+  public required DateTime Month { get; set; }
+  public required decimal BudgetAmount { get; set; }
+  public required decimal AlertThreshold { get; set; }
 }

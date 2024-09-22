@@ -1,23 +1,41 @@
-
 using Domain.DTOs;
 using Domain.Entities;
 
+using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
 namespace ExpenseTrackerGroup3.Services;
 
 public class BudgetService : IBudgetService
 {
-    private readonly IBudgetService _budgetService;
+    private readonly IBudgetRepository _budgetRepository;
+    private readonly IUserRepository _userRepository;
 
-    public BudgetService(IBudgetService budgetService)
+    public BudgetService(IBudgetRepository budgetRepository, IUserRepository userRepository)
     {
-        _budgetService = budgetService;
+        _budgetRepository = budgetRepository;
+        _userRepository = userRepository;
     }
 
-    public Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget)
+    public async Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget)
     {
-        throw new NotImplementedException();
+        var newBudget = new Budget
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            Month = budget.Month,
+            BudgetAmount = budget.BudgetAmount,
+            AlertThreshold = budget.AlertThreshold
+        };
+
+        var sucess = await _budgetRepository.CreateAsync(newBudget);
+
+        if (!sucess)
+        {
+            throw new Exception("Failed to create budget");
+        }
+
+        return newBudget;
     }
 
     public Task<bool> CheckBudgetStatusAsync(Guid userId, DateTime month)
@@ -25,23 +43,56 @@ public class BudgetService : IBudgetService
         throw new NotImplementedException();
     }
 
-    public Task<bool> DeleteBudgetAsync(Guid budgetId)
+    public async Task<bool> DeleteBudgetAsync(Guid budgetId)
     {
-        throw new NotImplementedException();
+        var budgetExist = _budgetRepository.GetByIdAsync(budgetId);
+
+        if (budgetExist == null)
+        {
+            throw new ArgumentException("Budget not found");
+        }
+
+        return await _budgetRepository.DeleteAsync(budgetId);
     }
 
-    public Task<Budget> GetBudgetUserByMonthAsync(Guid userId, DateTime month)
+    public async Task<Budget?> GetBudgetUserByMonthAsync(Guid userId, DateTime month)
     {
-        throw new NotImplementedException();
+        var userExists = _userRepository.GetByIdAsync(userId);
+
+        if (userExists == null)
+        {
+            throw new ArgumentException("User not found");
+        }
+
+        return await _budgetRepository.GetMonthlyBudgetByUserId(userId, month);
     }
 
-    public Task<decimal> GetRemainingBudgetAsync(Guid userId)
+    public async Task<decimal> GetRemainingBudgetAsync(Guid userId)
     {
-        throw new NotImplementedException();
+        var currentMonth = DateTime.UtcNow;
+        var budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, currentMonth);
+
+        if (budget == null)
+        {
+            throw new ArgumentException("Budget user not found");
+        }
+
+        
     }
 
-    public Task<bool> UpdateBudgetAsync(Guid budgetId, CreateBudget budget)
+    public async Task<bool> UpdateBudgetAsync(Guid budgetId, CreateBudget budget)
     {
-        throw new NotImplementedException();
+        var existingBudget = await _budgetRepository.GetByIdAsync(budgetId);
+
+        if (existingBudget == null)
+        {
+            return false;
+        }
+
+        existingBudget.Month = budget.Month;
+        existingBudget.BudgetAmount = budget.BudgetAmount;
+        existingBudget.AlertThreshold = budget.AlertThreshold;
+
+        return await _budgetRepository.UpdateAsync(existingBudget);
     }
 }
