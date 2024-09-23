@@ -90,11 +90,15 @@ public class BudgetController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRemainingBudget(Guid userId)
     {
-       
+        try
+        {
             var remainingBudget = await _budgetService.GetRemainingBudgetAsync(userId);
             return Ok(remainingBudget);
-        
-
+        }
+        catch (Exception e)
+        {
+            return HandleException(e);
+        }
     }
 
     [HttpGet("{userId}/{month}/status")]
