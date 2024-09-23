@@ -7,8 +7,8 @@ public interface IBudgetService
 {
     Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget);
     Task<Budget?> GetBudgetUserByMonthAsync(Guid userId, DateTime month);
-    Task<bool> UpdateBudgetAsync(Guid budgetId, CreateBudget budget);
-    Task<bool> DeleteBudgetAsync(Guid budgetId);
+    Task<bool> UpdateBudgetAsync(Guid userId, Guid budgetId, CreateBudget budget);
+    Task<bool> DeleteBudgetAsync(Guid budgetId, Guid userId);
     Task<decimal> GetRemainingBudgetAsync(Guid userId);
     Task<bool> CheckBudgetStatusAsync(Guid userId, DateTime month);
 }

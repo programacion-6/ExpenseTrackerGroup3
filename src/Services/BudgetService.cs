@@ -27,6 +27,13 @@ public class BudgetService : IBudgetService
             throw new ArgumentException("User not found");
         }
 
+        var alredyExists = await _budgetRepository.GetMonthlyBudgetByUserId(userId, budget.Month);
+
+        if (alredyExists != null)
+        {
+            throw new ArgumentException("Budget already exists for the user");
+        }
+
         var newBudget = new Budget
         {
             Id = Guid.NewGuid(),
@@ -52,7 +59,7 @@ public class BudgetService : IBudgetService
 
         if (budget == null)
         {
-            throw new ArgumentException("User not found");
+            throw new ArgumentException("Budget not found for the specified user and month");
         }
 
         var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, month);
@@ -61,13 +68,20 @@ public class BudgetService : IBudgetService
         return totalExpenses >= (budget.BudgetAmount * budget.AlertThreshold);
     }
 
-    public async Task<bool> DeleteBudgetAsync(Guid budgetId)
+    public async Task<bool> DeleteBudgetAsync(Guid budgetId, Guid userId)
     {
-        var budgetExist = await _budgetRepository.GetByIdAsync(budgetId);
+        var existingUser = await _userRepository.GetByIdAsync(userId);
 
-        if (budgetExist == null)
+        if (existingUser == null)
         {
-            throw new ArgumentException("Budget not found");
+            throw new ArgumentException("User not exists");
+        }
+
+        var budgetToDelete = await _budgetRepository.GetByIdAsync(budgetId);
+
+        if (budgetToDelete == null || budgetToDelete.UserId != userId)
+        {
+            throw new ArgumentException("This user does not have the specified budget");
         }
 
         return await _budgetRepository.DeleteAsync(budgetId);
@@ -88,32 +102,39 @@ public class BudgetService : IBudgetService
     public async Task<decimal> GetRemainingBudgetAsync(Guid userId)
     {
         var currentMonth = DateTime.UtcNow;
-        var budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, currentMonth);
+        var totalBudget = await _budgetRepository.GetBudgetByUserAsync(userId);
 
-        if (budget == null)
+        if (totalBudget == 0)
         {
-            throw new ArgumentException("Budget not found for the current month");
+            throw new ArgumentException("No budget found for the specified user");
         }
 
         var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth);
         var totalExpenses = expenses?.Sum(e => e?.Amount) ?? 0;
 
-        return budget.BudgetAmount - totalExpenses;
+        return totalBudget - totalExpenses;
     }
 
-    public async Task<bool> UpdateBudgetAsync(Guid budgetId, CreateBudget budget)
+    public async Task<bool> UpdateBudgetAsync(Guid userId, Guid budgetId, CreateBudget budget)
     {
-        var existingBudget = await _budgetRepository.GetByIdAsync(budgetId);
+        var existingBudget = await _userRepository.GetByIdAsync(userId);
 
         if (existingBudget == null)
         {
             throw new ArgumentException("User not exists");
         }
 
-        existingBudget.Month = budget.Month;
-        existingBudget.BudgetAmount = budget.BudgetAmount;
-        existingBudget.AlertThreshold = budget.AlertThreshold;
+        var budgetToUpdate = await _budgetRepository.GetByIdAsync(budgetId);
 
-        return await _budgetRepository.UpdateAsync(existingBudget);
+        if (budgetToUpdate == null || budgetToUpdate.UserId != userId)
+        {
+            throw new ArgumentException("This user does not have the specified budget");
+        }
+
+        budgetToUpdate.Month = budget.Month;
+        budgetToUpdate.BudgetAmount = budget.BudgetAmount;
+        budgetToUpdate.AlertThreshold = budget.AlertThreshold;
+
+        return await _budgetRepository.UpdateAsync(budgetToUpdate);
     }
 }

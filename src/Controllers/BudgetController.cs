@@ -50,15 +50,15 @@ public class BudgetController : BaseController
         }
     }
 
-    [HttpPut("{userId}")]
+    [HttpPut("{userId}/{budgetId}")]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateBudget(Guid userId, [FromBody] CreateBudget budget)
+    public async Task<IActionResult> UpdateBudget(Guid userId, Guid budgetId, [FromBody] CreateBudget budget)
     {
         try
         {
-            var updatedBudget = await _budgetService.UpdateBudgetAsync(userId, budget);
+            var updatedBudget = await _budgetService.UpdateBudgetAsync(userId, budgetId, budget);
             var response = ResponseBudget.FromDomain(budget.ToDomain());
             return Ok(response);
         }
@@ -68,14 +68,14 @@ public class BudgetController : BaseController
         }
     }
 
-    [HttpDelete("{userId}")]
+    [HttpDelete("{userId}/{budgetId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteBudget(Guid userId)
+    public async Task<IActionResult> DeleteBudget(Guid budgetId, Guid userId)
     {
         try
         {
-            await _budgetService.DeleteBudgetAsync(userId);
+            await _budgetService.DeleteBudgetAsync(budgetId, userId);
             return NoContent();
         }
         catch (Exception e)
@@ -90,15 +90,11 @@ public class BudgetController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRemainingBudget(Guid userId)
     {
-        try
-        {
+       
             var remainingBudget = await _budgetService.GetRemainingBudgetAsync(userId);
             return Ok(remainingBudget);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        
+
     }
 
     [HttpGet("{userId}/{month}/status")]
