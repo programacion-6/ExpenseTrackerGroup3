@@ -5,4 +5,5 @@ namespace ExpenseTrackerGroup3.Repositories.Interfaces;
 public interface IBudgetRepository : IRepository<Budget>
 {
     Task<Budget?> GetMonthlyBudgetByUserId(Guid userId, DateTime month);
+    Task<decimal> GetBudgetByUserAsync(Guid userId);
 }
