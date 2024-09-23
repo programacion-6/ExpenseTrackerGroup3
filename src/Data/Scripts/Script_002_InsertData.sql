@@ -1,4 +1,4 @@
-INSERT INTO "user" (id, name, email, passwordHash, createdAt) 
+INSERT INTO users (id, name, email, passwordHash, createdAt) 
 VALUES
 ('4a3a8e37-bd77-4266-aaee-de276f6b85e0', 'John Doe', 'john.doe@example.com', 'hash1', '2023-09-01'),
 ('0c3c5fef-b022-45af-b1d2-2d9792dfcec8', 'Jane Smith', 'jane.smith@example.com', 'hash2', '2023-09-02'),
