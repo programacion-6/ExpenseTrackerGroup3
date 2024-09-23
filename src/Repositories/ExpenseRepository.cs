@@ -76,9 +76,9 @@ public class ExpenseRepository : IExpenseRepository
     public async Task<IEnumerable<Expense?>> GetMonthlyExpensesAsync(Guid userId, DateTime month)
     {
         const string sql = @"
-        SELECT Id, UserId, Amount, Date, Description
-        FROM Expenses
-        WHERE UserId = @UserId AND date_trunc('month', Date) = date_trunc('month', @Month)";
+            SELECT Id, UserId, Amount, Date, Description
+            FROM Expense
+            WHERE UserId = @UserId AND Date <= @Month::date + interval '1 month' - interval '1 day'";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
         var expenses = await connection.QueryAsync<Expense>(sql, new { UserId = userId, Month = month });

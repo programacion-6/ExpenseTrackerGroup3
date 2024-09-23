@@ -36,6 +36,18 @@ public class BudgetRepository : IBudgetRepository
         return affectedRows > 0;
     }
 
+    public async Task<decimal> GetBudgetByUserAsync(Guid userId)
+    {
+        const string sql = @"
+        SELECT COALESCE(BudgetAmount, 0) AS BudgetAmount
+        FROM Budget
+        WHERE UserId = @UserId";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        return await connection.QuerySingleOrDefaultAsync<decimal>(sql, new { UserId = userId });
+    }
+
+
     public async Task<IEnumerable<Budget>> GetAllAsync()
     {
         const string sql = "SELECT * FROM Budget";
