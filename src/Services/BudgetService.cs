@@ -63,7 +63,7 @@ public class BudgetService : IBudgetService
 
     public async Task<bool> DeleteBudgetAsync(Guid budgetId)
     {
-        var budgetExist = _budgetRepository.GetByIdAsync(budgetId);
+        var budgetExist = await _budgetRepository.GetByIdAsync(budgetId);
 
         if (budgetExist == null)
         {
@@ -75,7 +75,7 @@ public class BudgetService : IBudgetService
 
     public async Task<Budget?> GetBudgetUserByMonthAsync(Guid userId, DateTime month)
     {
-        var userExists = _userRepository.GetByIdAsync(userId);
+        var userExists = await _userRepository.GetByIdAsync(userId);
 
         if (userExists == null)
         {
