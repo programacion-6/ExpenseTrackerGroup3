@@ -115,7 +115,7 @@ public class BudgetService : IBudgetService
         return totalBudget - totalExpenses;
     }
 
-    public async Task<bool> UpdateBudgetAsync(Guid userId, Guid budgetId, CreateBudget budget)
+    public async Task<Budget> UpdateBudgetAsync(Guid userId, Guid budgetId, CreateBudget budget)
     {
         var existingBudget = await _userRepository.GetByIdAsync(userId);
 
@@ -135,6 +135,8 @@ public class BudgetService : IBudgetService
         budgetToUpdate.BudgetAmount = budget.BudgetAmount;
         budgetToUpdate.AlertThreshold = budget.AlertThreshold;
 
-        return await _budgetRepository.UpdateAsync(budgetToUpdate);
+        await _budgetRepository.UpdateAsync(budgetToUpdate);
+
+        return budgetToUpdate;
     }
 }

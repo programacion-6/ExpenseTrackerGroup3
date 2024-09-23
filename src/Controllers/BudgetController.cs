@@ -59,7 +59,7 @@ public class BudgetController : BaseController
         try
         {
             var updatedBudget = await _budgetService.UpdateBudgetAsync(userId, budgetId, budget);
-            var response = ResponseBudget.FromDomain(budget.ToDomain());
+            var response = ResponseBudget.FromDomain(updatedBudget);
             return Ok(response);
         }
         catch (Exception e)
