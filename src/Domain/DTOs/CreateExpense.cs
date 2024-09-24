@@ -8,7 +8,8 @@ public record CreateExpense
   string Description,
   string Category,
   DateTime Date,
-  DateTime CreatedAt
+  DateTime CreatedAt,
+  bool RecurringExpense
 )
 {
   public Expense ToDomain()
@@ -19,7 +20,8 @@ public record CreateExpense
       Description = Description,
       Category = Category,
       Date = Date,
-      CreatedAt = CreatedAt
+      CreatedAt = CreatedAt,
+      RecurringExpense = RecurringExpense
     };
   }
 }
