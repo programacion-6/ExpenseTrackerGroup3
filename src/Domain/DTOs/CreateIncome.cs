@@ -5,8 +5,7 @@ namespace Domain.DTOs;
 public record CreateIncome
 (
   decimal Amount,
-  string Source,
-  DateTime CreatedAt
+  string Source
 )
 {
   public Income ToDomain()
@@ -14,8 +13,7 @@ public record CreateIncome
     return new Income
     {
       Amount = Amount,
-      Source = Source,
-      CreatedAt = CreatedAt
+      Source = Source
     };
   }
 }
