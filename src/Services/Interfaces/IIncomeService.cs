@@ -6,8 +6,7 @@ namespace ExpenseTrackerGroup3.Services.Interfaces;
 public interface IIncomeService
 {
     Task<Income> AddIncomeAsync(Guid userid, CreateIncome income);
-    Task<Income> GetIncomesByUserIdAsync(Guid userId);
-    Task<Income> GetMonthlyIncomeByUserId(Guid userId, DateTime month);
-    Task<Income> UpdateIncomeAsync(Guid userId, Guid incomeId, CreateIncome income);
-    Task<bool> DeleteIncomeAsync(Guid incomeId ,Guid userId);
+    Task<IEnumerable<Income>> GetIncomesByUserIdAsync(Guid userId);
+    Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime month);
+    Task<Income> UpdateIncomeAsync(Guid incomeId, UpdateIncome income);
 }
