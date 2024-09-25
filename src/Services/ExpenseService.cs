@@ -166,13 +166,11 @@ public class ExpenseService : IExpenseService
             throw new ArgumentException("User not found");
         }
 
-        IEnumerable<Expense> allExpenses = await _expenseRepository.GetAllAsync();
+        IEnumerable<Expense> userExpenses = await _expenseRepository.GetAllByUserId(userId);
 
-        var userRecurringExpense = allExpenses
-            .Where(expense => expense.UserId.Equals(user.Id) 
-            && expense.RecurringExpense == true);
+        var userRecurringExpense = userExpenses
+            .Where(expense => expense.RecurringExpense == true);
 
         return userRecurringExpense;
     }
-
 }
