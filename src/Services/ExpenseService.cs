@@ -49,10 +49,7 @@ public class ExpenseService : IExpenseService
 
     public async Task<IEnumerable<Expense>> GetExpenseByUserIdAsync(Guid userId)
     {
-        IEnumerable<Expense> allExpenses = await _expenseRepository.GetAllAsync();
-
-        var userExpenses = allExpenses
-            .Where(expense => expense.UserId.Equals(userId));
+        IEnumerable<Expense> userExpenses = await _expenseRepository.GetAllByUserId(userId);
 
         if (!userExpenses.Any())
         {
@@ -76,9 +73,9 @@ public class ExpenseService : IExpenseService
 
     public async Task<IEnumerable<Expense>> GetUserExpensesByCategoryAsync(Guid userId, DateTime month, string category)
     {
-        IEnumerable<Expense> allExpenses = await _expenseRepository.GetAllAsync();
+        IEnumerable<Expense> userExpenses = await _expenseRepository.GetAllByUserId(userId);
 
-        var categoryExpenses = allExpenses
+        var categoryExpenses = userExpenses
             .Where(expense => expense.Category
             .Equals(category, StringComparison.OrdinalIgnoreCase) 
             && expense.Date.Month.Equals(month.Month));

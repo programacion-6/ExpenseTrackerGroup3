@@ -48,6 +48,15 @@ public class ExpenseRepository : IExpenseRepository
         return await connection.QueryAsync<Expense>(query);
     }
 
+    public async Task<IEnumerable<Expense>> GetAllByUserId(Guid userId)
+    {
+        const string query = "SELECT * FROM Expense WHERE UserId = @UserId";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+
+        return await connection.QueryAsync<Expense>(query, new { UserId = userId });
+    }
+
     public async Task<Expense?> GetByIdAsync(Guid id)
     {
         const string query = "SELECT * FROM Expense WHERE Id = @Id";
