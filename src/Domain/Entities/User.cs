@@ -1,5 +1,3 @@
-using System;
-
 namespace Domain.Entities;
 
 public class User
@@ -9,5 +7,4 @@ public class User
   public required string Email { get; set; }
   public required string PasswordHash { get; set; }
   public DateTime CreatedAt { get; set; }
-
 }

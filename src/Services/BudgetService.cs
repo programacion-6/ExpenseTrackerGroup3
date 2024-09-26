@@ -55,6 +55,7 @@ public class BudgetService : IBudgetService
 
     public async Task<bool> CheckBudgetStatusAsync(Guid userId, DateTime month)
     {
+        var currentMonth = DateTime.UtcNow;
         var budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, month);
 
         if (budget == null)
@@ -62,10 +63,10 @@ public class BudgetService : IBudgetService
             throw new ArgumentException("Budget not found for the specified user and month");
         }
 
-        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, month);
+        var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth);
         var totalExpenses = expenses?.Sum(e => e?.Amount) ?? 0;
 
-        return totalExpenses >= (budget.BudgetAmount * budget.AlertThreshold);
+        return totalExpenses >= (budget.BudgetAmount * (budget.AlertThreshold / 100));
     }
 
     public async Task<bool> DeleteBudgetAsync(Guid budgetId, Guid userId)
