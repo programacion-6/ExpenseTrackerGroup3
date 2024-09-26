@@ -3,6 +3,8 @@ using Domain.DTOs;
 using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
@@ -17,20 +19,23 @@ public class UserController : BaseController
     }
 
     [HttpGet("{userId}/profile")]
+    [Authorize]
     public async Task<ActionResult> GetUserProfile(Guid userId)
     {
-        try {
+        try
+        {
             var user = await _userService.GetUserProfileAsync(userId);
             var response = ResponseUser.FromDomain(user);
             return Ok(response);
-        } 
-        catch (Exception e) 
+        }
+        catch (Exception e)
         {
             return HandleException(e);
         }
     }
 
     [HttpPut("{userId}/profile")]
+    [Authorize]
     public async Task<ActionResult> UpdateUserProfile(Guid userId, [FromBody] UpdateUserDTO user)
     {
         try
