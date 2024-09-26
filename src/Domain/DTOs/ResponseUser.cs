@@ -4,20 +4,16 @@ namespace Domain.DTOs;
 
 public record ResponseUser
 (
-  Guid Id,
   string Name,
-  string Email,
-  DateTime CreatedAt
+  string Email
 )
 {
   public static ResponseUser FromDomain(User user)
   {
     return new ResponseUser
     (
-      user.Id,
       user.Name,
-      user.Email,
-      user.CreatedAt
+      user.Email
     );
   }
 }
