@@ -52,6 +52,14 @@ public class UserRepository : IUserRepository
         return await connection.QuerySingleOrDefaultAsync<User>(sql, new { Id = id });
     }
 
+    public async Task<User?> GetByEmailAsync(string email)
+    {
+        const string sql = "SELECT * FROM Users WHERE Email = @Email";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        return await connection.QuerySingleOrDefaultAsync<User>(sql, new {Email = email});
+    }
+
     public async Task<bool> ResetPassword(string email)
     {
         const string sql = "SELECT COUNT(1) FROM Users WHERE Email = @Email";
