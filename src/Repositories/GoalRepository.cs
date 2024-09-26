@@ -1,4 +1,3 @@
-
 using Domain.Entities;
 
 using ExpenseTrackerGroup3.Repositories.Interfaces;
@@ -75,7 +74,7 @@ public class GoalRepository : IGoalRepository
 
         using var connection = await _dbConnection.CreateConnectionAsync();
         var goals = await connection.QueryAsync<Goal>(query, new { UserId = userId });
-        return goals.ToList(); 
+        return goals; 
     }
 
     public async Task<decimal> GetGoalProgressAsync(Guid id)
@@ -84,7 +83,7 @@ public class GoalRepository : IGoalRepository
         SELECT 
             CASE 
                 WHEN GoalAmount = 0 THEN 0 
-                ELSE (CurrentAmount / GoalAmount) 
+                ELSE (CurrentAmount / GoalAmount * 100.0) 
             END AS Progress
         FROM Goal
         Where Id = @Id
