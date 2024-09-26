@@ -74,36 +74,23 @@ public class IncomeService : IIncomeService
        return incomes.Where(i => i.UserId == userId && i.CreatedAt.Month == month.Month);
     }
 
-    public async Task<Income> UpdateIncomeAsync(Guid userId, UpdateIncome income)
+    public async Task<Income> UpdateIncomeAsync(Guid incomeId, UpdateIncome income)
     {
-        var existingUser = await _userRepository.GetByIdAsync(userId);
+        var existingIncome = await _incomeRepository.GetByIdAsync(incomeId);
 
-        if (existingUser == null)
-        {
-            throw new ArgumentException("User not found");
-        }
-
-        IEnumerable<Income> incomes = await _incomeRepository.GetAllAsync();
-
-        IEnumerable<Income> userIncomes = incomes.Where(i => i.UserId == userId);
-
-        Income? incomeToUpdate = userIncomes.FirstOrDefault(i => i.Id == income.Id);
-
-        if (incomeToUpdate == null)
-        {
-            throw new ArgumentException("Income not found");
-        }
+        if (existingIncome == null)
+            {
+                throw new ArgumentException("Income not found");
+            }
         
-        incomeToUpdate = income.ToDomain(incomeToUpdate);
-
-        var success = await _incomeRepository.UpdateAsync(incomeToUpdate);
+        existingIncome = income.ToDomain(existingIncome);
+        var success = await _incomeRepository.UpdateAsync(existingIncome);
 
         if (!success)
-        {
-            throw new Exception("Failed to update income");
-        }
+            {
+                throw new Exception("Failed to update income");
+            }
 
-        return incomeToUpdate;
-    }
-  
+        return existingIncome;
+    }   
 }
