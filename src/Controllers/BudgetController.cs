@@ -76,7 +76,8 @@ public class BudgetController : BaseController
         try
         {
             await _budgetService.DeleteBudgetAsync(budgetId, userId);
-            return NoContent();
+            const string succesfullyMessage = "Bugdet deleted succesfully";
+            return Ok(succesfullyMessage);
         }
         catch (Exception e)
         {

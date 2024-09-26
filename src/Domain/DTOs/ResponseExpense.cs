@@ -7,10 +7,11 @@ public record ResponseExpense
   Guid Id,
   Guid UserId,
   decimal Amount,
-  string Description,
+  string? Description,
   string Category,
   DateTime Date,
-  DateTime CreatedAt
+  DateTime CreatedAt,
+  bool RecurringExpense
 )
 {
   public static ResponseExpense FromDomain(Expense expense)
@@ -23,7 +24,8 @@ public record ResponseExpense
       expense.Description,
       expense.Category,
       expense.Date,
-      expense.CreatedAt
+      expense.CreatedAt,
+      expense.RecurringExpense
     );
   }
 }

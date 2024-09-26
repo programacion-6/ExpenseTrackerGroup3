@@ -42,6 +42,7 @@ public static class DependencyInjection
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IIncomeService, IncomeService>();
+        services.AddScoped<IExpenseService, ExpenseService>();
         return services;
     }
 }
