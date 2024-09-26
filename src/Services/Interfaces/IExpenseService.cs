@@ -10,7 +10,7 @@ public interface IExpenseService
     Task<IEnumerable<Expense>> GetExpenseByUserIdAsync(Guid userId);
     Task<Expense> UpdateExpenseAsync(Guid userId, Guid expenseId, CreateExpense expense);
     Task<bool> DeleteExpense(Guid userId, Guid expenseId);
-    Task<string> GetHighestExpeseUserCategoryAsync(Guid userId);
+    Task<string> GetHighestExpenseUserCategoryAsync(Guid userId);
     Task<string> GetUserMostExpensiveMonth(Guid userId);
     Task<IEnumerable<Expense>> GetUserRecurringExpense(Guid userId);
 }

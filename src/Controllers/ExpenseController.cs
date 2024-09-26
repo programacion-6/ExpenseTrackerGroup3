@@ -56,7 +56,7 @@ public class ExpenseController : BaseController
     {
         try
         {
-            var category = await _expenseService.GetHighestExpeseUserCategoryAsync(userId);
+            var category = await _expenseService.GetHighestExpenseUserCategoryAsync(userId);
             return Ok(category);
         }
         catch (Exception e)
@@ -107,7 +107,8 @@ public class ExpenseController : BaseController
         try
         {
             await _expenseService.DeleteExpense(userId, expenseId);
-            return NoContent();
+            const string succesfullyMessage = "Expense deleted succesfully";
+            return Ok(succesfullyMessage);
         }
         catch (Exception e)
         {

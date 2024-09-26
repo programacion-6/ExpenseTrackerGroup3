@@ -59,7 +59,7 @@ public class ExpenseService : IExpenseService
         return userExpenses;
     }
 
-    public async Task<string> GetHighestExpeseUserCategoryAsync(Guid userId)
+    public async Task<string> GetHighestExpenseUserCategoryAsync(Guid userId)
     {
         string? highestCategory = await _expenseRepository.GetHighestSpendingCategoryByUserId(userId);
 
