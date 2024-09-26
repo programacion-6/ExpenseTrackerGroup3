@@ -7,7 +7,7 @@ public record ResponseGoal
   Guid Id,
   Guid UserId,
   decimal GoalAmount,
-  DateTime DateTime,
+  DateTime DeadLine,
   decimal CurrentAmount,
   DateTime CreatedAt
 )
