@@ -86,7 +86,7 @@ public class GoalController : BaseController
         }
     }
 
-    [HttpGet("{goalId}/progress")]
+    [HttpGet("{userId}/{goalId}/progress")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetGoalProgress(Guid userId, Guid goalId)
@@ -102,11 +102,11 @@ public class GoalController : BaseController
         }
     }
 
-    [HttpPut("{goalId}/progress")]
+    [HttpPut("{userId}/{goalId}/{amount}/progress")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateGoalProgress(Guid userId, Guid goalId, [FromBody] decimal amount)
+    public async Task<IActionResult> UpdateGoalProgress(Guid userId, Guid goalId, decimal amount)
     {
         try
         {
