@@ -1,4 +1,5 @@
 using ExpenseTrackerGroup3.Infraestructure;
+using ExpenseTrackerGroup3.Middleware;
 using ExpenseTrackerGroup3.RequestPipeline;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseRouting();  
 app.MapControllers();

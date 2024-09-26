@@ -1,6 +1,7 @@
 using ExpenseTrackerGroup3.Data;
 using ExpenseTrackerGroup3.Data.Concretes;
 using ExpenseTrackerGroup3.Data.Interfaces;
+using ExpenseTrackerGroup3.Middleware;
 using ExpenseTrackerGroup3.Repositories;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services;
@@ -12,10 +13,11 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.
-            AddDatabase(configuration)
+        services
+            .AddDatabase(configuration)
             .AddRepositories()
-            .AddServices();
+            .AddServices()
+            .AddMiddleware();
         return services;
     }
 
@@ -42,6 +44,12 @@ public static class DependencyInjection
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IIncomeService, IncomeService>();
+        return services;
+    }
+
+    private static IServiceCollection AddMiddleware(this IServiceCollection services)
+    {
+        services.AddTransient<ExceptionMiddleware>();
         return services;
     }
 }
