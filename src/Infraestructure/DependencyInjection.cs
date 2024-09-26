@@ -5,6 +5,11 @@ using ExpenseTrackerGroup3.Repositories;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services;
 using ExpenseTrackerGroup3.Services.Interfaces;
+using ExpenseTrackerGroup3.Utils;
+using ExpenseTrackerGroup3.Utils.Hasher.Interfaces;
+using ExpenseTrackerGroup3.Utils.Jwt;
+using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
+using ExpenseTrackerGroup3.Utils.Swagger;
 
 namespace ExpenseTrackerGroup3.Infraestructure;
 
@@ -14,14 +19,18 @@ public static class DependencyInjection
     {
         services.
             AddDatabase(configuration)
+            .AddAuthServices()
+            .AddSwaggerAuthentication()
             .AddRepositories()
-            .AddServices();
+            .AddServices()
+            .AddJwtAuthentication(configuration);
         return services;
     }
 
     private static IServiceCollection AddDatabase(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<DatabaseOptions>(configuration.GetSection(DatabaseOptions.ConnectionStrings));
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.Jwt));
         services.AddScoped<IDbConnectionFactory, DbConnection>();
         services.AddScoped<IDbInitializer, DbInitializer>();
         return services;
@@ -41,9 +50,17 @@ public static class DependencyInjection
     {
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IIncomeService, IncomeService>();
-        services.AddScoped<IExpenseService, ExpenseService>();
-        services.AddScoped<IGoalService, GoalService>();
+        services.AddScoped<IExpenseRepository, ExpenseRepository>();
+        services.AddScoped<IGoalRepository, GoalRepository>();
+        services.AddScoped<IIncomeRepository, IncomeRepository>();
+        return services;
+    }
+
+    private static IServiceCollection AddAuthServices(this IServiceCollection services)
+    {
+        services.AddScoped<IPasswordHasher, PasswordHasher>();
+        services.AddScoped<IJwtService, JwtService>();
+        services.AddScoped<IAuthService, AuthService>();
         return services;
     }
 }
