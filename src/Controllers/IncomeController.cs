@@ -2,85 +2,56 @@ using Domain.DTOs;
 using Domain.Entities;
 
 using ExpenseTrackerGroup3.Services.Interfaces;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
-public class IncomeController : BaseController
+[ApiController]
+[Route("api/v1/[controller]")]
+public class IncomeController : ControllerBase
 {
-  private readonly IIncomeService _incomeService;
-  
-  public IncomeController(IIncomeService incomeService)
-  {
-    _incomeService = incomeService;
-  }
+    private readonly IIncomeService _incomeService;
 
-  [HttpPost("{userId}")]
-  [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status201Created)]
-  [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  public async Task<IActionResult> AddIncome(Guid userId, [FromBody] CreateIncome income)
-  {
-    try
+    public IncomeController(IIncomeService incomeService)
     {
-      var newIncome = await _incomeService.AddIncomeAsync(userId, income);
+        _incomeService = incomeService;
+    }
 
-      return Ok(newIncome);
-    }
-    catch (Exception e)
+    [HttpPost("{userId}")]
+    [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> AddIncome(Guid userId, [FromBody] CreateIncome income)
     {
-      return HandleException(e);
+        var newIncome = await _incomeService.AddIncomeAsync(userId, income);
+        return Ok(newIncome);
     }
-  }
 
-  [HttpGet("{userId}")]
-  [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
-  [ProducesResponseType(StatusCodes.Status404NotFound)]
-  public async Task<IActionResult> GetIncomesByUserId(Guid userId)
-  {
-    try
+    [HttpGet("{userId}")]
+    [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetIncomesByUserId(Guid userId)
     {
-      IEnumerable<Income> income = await _incomeService.GetIncomesByUserIdAsync(userId);
+        IEnumerable<Income> income = await _incomeService.GetIncomesByUserIdAsync(userId);
+        return Ok(income);
+    }
 
-      return Ok(income);
-    }
-    catch (Exception e)
+    [HttpGet("{userId}/{month}")]
+    [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetMonthlyIncome(Guid userId, DateTime month)
     {
-      return HandleException(e);
+        var income = await _incomeService.GetMonthlyIncomeByUserId(userId, month);
+        return Ok(income);
     }
-  }
 
-  [HttpGet("{userId}/{month}")]
-  [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
-  [ProducesResponseType(StatusCodes.Status404NotFound)]
-  public async Task<IActionResult> GetMonthlyIncome(Guid userId, DateTime month)
-  {
-    try
+    [HttpPut("{incomeId}")]
+    [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UpdateIncome(Guid incomeId, [FromBody] UpdateIncome income)
     {
-      var income = await _incomeService.GetMonthlyIncomeByUserId(userId, month);
-
-      return Ok(income);
+        var updatedIncome = await _incomeService.UpdateIncomeAsync(incomeId, income);
+        return Ok(updatedIncome);
     }
-    catch (Exception e)
-    {
-      return HandleException(e);
-    }
-  }
-
-  [HttpPut("{userId}")]
-  [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
-  [ProducesResponseType(StatusCodes.Status400BadRequest)]
-  [ProducesResponseType(StatusCodes.Status404NotFound)]
-  public async Task<IActionResult> UpdateIncome(Guid userId, [FromBody] UpdateIncome income)
-  {
-    try
-    {
-      var updatedIncome = await _incomeService.UpdateIncomeAsync(userId, income);
-
-      return Ok(updatedIncome);
-    }
-    catch (Exception e)
-    {
-      return HandleException(e);
-    }
-  }
 }

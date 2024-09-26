@@ -57,6 +57,18 @@ public class IncomeRepository : IIncomeRepository
         return await connection.QuerySingleOrDefaultAsync<Income>(sql, new { Id = id });
     }
 
+    public async Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, int year, int month)
+    {
+        const string sql = @"
+            SELECT * FROM Income
+            WHERE UserId = @UserId
+            AND EXTRACT(YEAR FROM CreatedAt) = @Year
+            AND EXTRACT(MONTH FROM CreatedAt) = @Month";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        return await connection.QueryAsync<Income>(sql, new { UserId = userId, Year = year, Month = month });
+    }
+
     public async Task<bool> UpdateAsync(Income item)
     {
         const string sql = @"

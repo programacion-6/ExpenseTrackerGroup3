@@ -1,6 +1,7 @@
 using Domain.DTOs;
 using Domain.Entities;
 
+using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
@@ -23,7 +24,7 @@ public class IncomeService : IIncomeService
 
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var newIncome = new Income
@@ -39,7 +40,7 @@ public class IncomeService : IIncomeService
 
         if (!success)
         {
-            throw new Exception("Failed to create income");
+            throw new InternalServerErrorException("Failed to create income");
         }
 
         return newIncome;
@@ -52,7 +53,7 @@ public class IncomeService : IIncomeService
 
         if (user == null) 
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         IEnumerable<Income> income = await _incomeRepository.GetAllAsync();
@@ -60,18 +61,16 @@ public class IncomeService : IIncomeService
         return income.Where(i => i.UserId == userId);
     }
 
-    public async Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime month)
+    public async Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime date)
     {
         User? user = await _userRepository.GetByIdAsync(userId);
 
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
-       IEnumerable<Income> incomes = await _incomeRepository.GetAllAsync();
-
-       return incomes.Where(i => i.UserId == userId && i.CreatedAt.Month == month.Month);
+       return await _incomeRepository.GetMonthlyIncomeByUserId(userId, date.Year, date.Month);
     }
 
     public async Task<Income> UpdateIncomeAsync(Guid incomeId, UpdateIncome income)
@@ -80,7 +79,7 @@ public class IncomeService : IIncomeService
 
         if (existingIncome == null)
             {
-                throw new ArgumentException("Income not found");
+                throw new NotFoundException("Income not found");
             }
         
         existingIncome = income.ToDomain(existingIncome);
@@ -88,7 +87,7 @@ public class IncomeService : IIncomeService
 
         if (!success)
             {
-                throw new Exception("Failed to update income");
+                throw new InternalServerErrorException("Failed to update income");
             }
 
         return existingIncome;
