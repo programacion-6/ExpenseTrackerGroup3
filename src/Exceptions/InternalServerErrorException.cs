@@ -4,8 +4,8 @@ namespace ExpenseTrackerGroup3.Exceptions;
 
 public class InternalServerErrorException : ApiException
 {
-    public InternalServerErrorException(string message)
-        : base(HttpStatusCode.InternalServerError, message)
+    public InternalServerErrorException(string message, string? details = null)
+        : base(HttpStatusCode.InternalServerError, message, "INTERNAL_SERVER_ERROR", details)
     {
     }
 }

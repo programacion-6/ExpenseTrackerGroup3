@@ -2,12 +2,13 @@ using Domain.DTOs;
 
 using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
-public class UserController : BaseController
+[ApiController]
+[Route("api/v1/[controller]")]
+public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
 
@@ -17,31 +18,16 @@ public class UserController : BaseController
     }
 
     [HttpGet("{userId}/profile")]
-    public async Task<ActionResult> GetUserProfile(Guid userId)
+    public async Task<ActionResult<ResponseUser>> GetUserProfile(Guid userId)
     {
-        try {
-            var user = await _userService.GetUserProfileAsync(userId);
-            var response = ResponseUser.FromDomain(user);
-            return Ok(response);
-        } 
-        catch (Exception e) 
-        {
-            return HandleException(e);
-        }
+        var user = await _userService.GetUserProfileAsync(userId);
+        return Ok(ResponseUser.FromDomain(user));
     }
 
     [HttpPut("{userId}/profile")]
-    public async Task<ActionResult> UpdateUserProfile(Guid userId, [FromBody] UpdateUserDTO user)
+    public async Task<ActionResult<ResponseUser>> UpdateUserProfile(Guid userId, [FromBody] UpdateUserDTO user)
     {
-        try
-        {
-            var updatedUser = await _userService.UpdateUserProfileAsync(userId, user);
-            var response = ResponseUser.FromDomain(updatedUser);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var updatedUser = await _userService.UpdateUserProfileAsync(userId, user);
+        return Ok(ResponseUser.FromDomain(updatedUser));
     }
 }

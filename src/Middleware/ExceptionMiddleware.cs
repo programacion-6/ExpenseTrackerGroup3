@@ -45,6 +45,9 @@ public class ExceptionMiddleware
             case ApiException apiException:
                 response.StatusCode = (int)apiException.StatusCode;
                 response.Message = apiException.Message;
+                response.ErrorCode = apiException.ErrorCode;
+                response.Details = apiException.Details;
+                response.TimeStamp = apiException.TimeStamp;
                 break;
             default:
                 response.Message = "An unexpected error occurred.";

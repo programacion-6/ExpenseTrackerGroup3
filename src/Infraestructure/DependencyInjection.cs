@@ -16,8 +16,7 @@ public static class DependencyInjection
         services
             .AddDatabase(configuration)
             .AddRepositories()
-            .AddServices()
-            .AddMiddleware();
+            .AddServices();
         return services;
     }
 
@@ -44,12 +43,6 @@ public static class DependencyInjection
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IIncomeService, IncomeService>();
-        return services;
-    }
-
-    private static IServiceCollection AddMiddleware(this IServiceCollection services)
-    {
-        services.AddTransient<ExceptionMiddleware>();
         return services;
     }
 }

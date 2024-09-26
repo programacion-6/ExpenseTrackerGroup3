@@ -2,6 +2,7 @@
 using Domain.Entities;
 
 using ExpenseTrackerGroup3.Domain.DTOs;
+using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
@@ -18,14 +19,16 @@ public class UserService : IUserService
     
     public async Task<User?> GetUserProfileAsync(Guid userId)
     {
-        var userExists = _userRepository.GetByIdAsync(userId);
+        var userExists = await _userRepository.GetByIdAsync(userId);
 
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException(
+                $"User with id {userId} not found",
+                "The user you are trying to access does not exist");
         }
 
-        return await userExists;
+        return userExists;
     }
 
     public async Task<User> UpdateUserProfileAsync(Guid userId, UpdateUserDTO user)
@@ -34,7 +37,9 @@ public class UserService : IUserService
 
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException(
+                $"User with id {userId} not found",
+                "The user you are trying to access does not exist");
         }
 
         var updatedUser = user.ToDomain(userExists);
@@ -42,7 +47,9 @@ public class UserService : IUserService
         
         if (!success)
         {
-            throw new Exception("Failed to update user");
+            throw new InternalServerErrorException(
+                "Failed to update user",
+                "An error occurred while trying to update the user");
         }
 
         return updatedUser;
