@@ -17,15 +17,13 @@ public class IncomeRepository : IIncomeRepository
     public async Task<bool> CreateAsync(Income item)
     {
         const string sql = @"
-            INSERT INTO Income (Id, UserId,
-                                    Amount,
-                                    Month, 
-                                    Source,
-                                    CreatedAt)
+            INSERT INTO Income (id, userId,
+                                    amount, 
+                                    source,
+                                    createdAt)
             VALUES (@Id,
                     @UserId, 
                     @Amount, 
-                    @Month, 
                     @Source, 
                     @CreatedAt)";
 
@@ -59,24 +57,12 @@ public class IncomeRepository : IIncomeRepository
         return await connection.QuerySingleOrDefaultAsync<Income>(sql, new { Id = id });
     }
 
-    public async Task<Income?> GetMonthlyIncomeByUserId(Guid userId, DateTime month)
-    {
-        const string sql = @"
-            SELECT * FROM Income
-            WHERE UserId = @UserId AND date_trunc('month', Month) = date_trunc('month', @Month)";
-        
-        using var connection = await _dbConnection.CreateConnectionAsync();
-        return await connection.QuerySingleOrDefaultAsync<Income>(sql, new { UserId = userId, Month = month });
-    }
-
     public async Task<bool> UpdateAsync(Income item)
     {
         const string sql = @"
             UPDATE Income
-            SET UserId = @UserId,
-              Amount = @Amount,
-              Month = @Month,
-              Source = @Source, 
+            SET Amount = @Amount,
+              Source = @Source,
               CreatedAt = @CreatedAt
             WHERE Id = @Id";
         
