@@ -23,9 +23,7 @@ public class UserService : IUserService
 
         if (userExists == null)
         {
-            throw new NotFoundException(
-                $"User with id {userId} not found",
-                "The user you are trying to access does not exist");
+            throw new NotFoundException("User not found");
         }
 
         return userExists;
@@ -37,9 +35,7 @@ public class UserService : IUserService
 
         if (userExists == null)
         {
-            throw new NotFoundException(
-                $"User with id {userId} not found",
-                "The user you are trying to access does not exist");
+            throw new NotFoundException("User not found");
         }
 
         var updatedUser = user.ToDomain(userExists);
@@ -47,9 +43,7 @@ public class UserService : IUserService
         
         if (!success)
         {
-            throw new InternalServerErrorException(
-                "Failed to update user",
-                "An error occurred while trying to update the user");
+            throw new InternalServerErrorException("Failed to update user");
         }
 
         return updatedUser;

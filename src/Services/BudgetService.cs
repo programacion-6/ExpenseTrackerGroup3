@@ -1,6 +1,7 @@
 using Domain.DTOs;
 using Domain.Entities;
 
+using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
@@ -24,14 +25,14 @@ public class BudgetService : IBudgetService
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var alredyExists = await _budgetRepository.GetMonthlyBudgetByUserId(userId, budget.Month);
 
         if (alredyExists != null)
         {
-            throw new ArgumentException("Budget already exists for the user");
+            throw new BadRequestException("Budget already exists for the user");
         }
 
         var newBudget = new Budget
@@ -47,7 +48,7 @@ public class BudgetService : IBudgetService
 
         if (!sucess)
         {
-            throw new Exception("Failed to create budget");
+            throw new InternalServerErrorException("Failed to create budget");
         }
 
         return newBudget;
@@ -60,7 +61,7 @@ public class BudgetService : IBudgetService
 
         if (budget == null)
         {
-            throw new ArgumentException("Budget not found for the specified user and month");
+            throw new NotFoundException("Budget not found for the specified user and month");
         }
 
         var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth);
@@ -75,14 +76,14 @@ public class BudgetService : IBudgetService
 
         if (existingUser == null)
         {
-            throw new ArgumentException("User not exists");
+            throw new NotFoundException("User does not exists");
         }
 
         var budgetToDelete = await _budgetRepository.GetByIdAsync(budgetId);
 
         if (budgetToDelete == null || budgetToDelete.UserId != userId)
         {
-            throw new ArgumentException("This user does not have the specified budget");
+            throw new BadRequestException("This user does not have the specified budget");
         }
 
         return await _budgetRepository.DeleteAsync(budgetId);
@@ -94,7 +95,7 @@ public class BudgetService : IBudgetService
 
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         return await _budgetRepository.GetMonthlyBudgetByUserId(userId, month);
@@ -107,7 +108,7 @@ public class BudgetService : IBudgetService
 
         if (totalBudget == 0)
         {
-            throw new ArgumentException("No budget found for the specified user");
+            throw new NotFoundException("No budget found for the specified user");
         }
 
         var expenses = await _expenseRepository.GetMonthlyExpensesAsync(userId, currentMonth);
@@ -122,14 +123,14 @@ public class BudgetService : IBudgetService
 
         if (existingBudget == null)
         {
-            throw new ArgumentException("User not exists");
+            throw new NotFoundException("User not exists");
         }
 
         var budgetToUpdate = await _budgetRepository.GetByIdAsync(budgetId);
 
         if (budgetToUpdate == null || budgetToUpdate.UserId != userId)
         {
-            throw new ArgumentException("This user does not have the specified budget");
+            throw new BadRequestException("This user does not have the specified budget");
         }
 
         budgetToUpdate.Month = budget.Month;
