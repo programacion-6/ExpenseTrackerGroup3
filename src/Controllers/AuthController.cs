@@ -2,14 +2,14 @@ using Domain.DTOs;
 
 using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
-
 using Microsoft.AspNetCore.Authorization;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
-public class AuthController : BaseController
+[ApiController]
+[Route("api/v1/[controller]")]
+public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
 
@@ -23,17 +23,9 @@ public class AuthController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> RegisterUser([FromBody] CreateUser user)
     {
-        try
-        {
-            var newUser = await _authService.RegisterUserAsync(user);
-            var response = ResponseUser.FromDomain(newUser);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-
-            return HandleException(e);
-        }
+        var newUser = await _authService.RegisterUserAsync(user);
+        var response = ResponseUser.FromDomain(newUser);
+        return Ok(response);
     }
 
     [HttpPost("login")]
@@ -41,17 +33,9 @@ public class AuthController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> LoginUser([FromBody] LoginRequest loginRequest)
     {
-        try
-        {
-            var user = await _authService.LoginUserAsync(loginRequest.Email, loginRequest.Password);
-            var response = LoginResponse.FromDomain(user);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-
-            return HandleException(e);
-        }
+        var user = await _authService.LoginUserAsync(loginRequest.Email, loginRequest.Password);
+        var response = LoginResponse.FromDomain(user);
+        return Ok(response);
     }
 
     [HttpPost("requestResetPassword")]
@@ -60,15 +44,8 @@ public class AuthController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> RequestResetPassword([FromBody] RequestResetPassword request)
     {
-        try
-        {
-            await _authService.RequestResetPasswordAsync(request);
-            return Ok("Reset password email sent, check your inbox.");
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        await _authService.RequestResetPasswordAsync(request);
+        return Ok("Reset password email sent, check your inbox.");
     }
 
     [HttpPut("resetPassword")]
@@ -77,14 +54,7 @@ public class AuthController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> ResetPassword([FromBody] ResetPassword reset)
     {
-        try
-        {
-            await _authService.ResetPasswordAsync(reset);
-            return Ok("Password has been reset successfully.");
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        await _authService.ResetPasswordAsync(reset);
+        return Ok("Password has been reset successfully.");
     }
 }

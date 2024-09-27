@@ -2,6 +2,7 @@ using Domain.DTOs;
 using Domain.Entities;
 
 using ExpenseTrackerGroup3.Domain.DTOs;
+using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.EmailSender;
@@ -31,14 +32,14 @@ public class AuthService : IAuthService
 
         if (user == null)
         {
-            throw new ArgumentException("Invalid email or password");
+            throw new NotFoundException("User not found");
         }
 
         bool verifiedPassword = _passwordHasher.VerifyPassword(user.PasswordHash, password);
 
         if (!verifiedPassword)
         {
-            throw new ArgumentException("Invalid email or password");
+            throw new NotFoundException("Password is incorrect");
         }
 
         return new LoginResponse(user.Email, _jwtService.GenerateToken(user.Email, "login", TimeSpan.FromHours(2)));
@@ -50,7 +51,7 @@ public class AuthService : IAuthService
 
         if (existingUser != null)
         {
-            throw new ArgumentException("Registration could not be completed. Please check your information and try again.");
+            throw new BadRequestException("User alredy register with this email.");
         }
 
         var passwordHashed = _passwordHasher.HashPassword(user.Password);
@@ -68,7 +69,7 @@ public class AuthService : IAuthService
 
         if (!result)
         {
-            throw new ArgumentException("Failed to register user");
+            throw new InternalServerErrorException("Failed to register user");
         }
 
         return newUser;
@@ -79,7 +80,7 @@ public class AuthService : IAuthService
         var user = await _userRepository.GetByEmailAsync(request.Email);
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var resetToken = _jwtService.GenerateToken(user.Email, "resetPassword", TimeSpan.FromHours(1));
@@ -94,7 +95,7 @@ public class AuthService : IAuthService
         var user = await _userRepository.GetByEmailAsync(email);
         if (user == null)
         {
-            throw new ArgumentException("Invalid token or user not found");
+            throw new NotFoundException("Invalid token or user not found");
         }
 
         var hashedPassword = _passwordHasher.HashPassword(reset.Password);
