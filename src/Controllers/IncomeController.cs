@@ -3,10 +3,13 @@ using Domain.Entities;
 
 using ExpenseTrackerGroup3.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class IncomeController : ControllerBase

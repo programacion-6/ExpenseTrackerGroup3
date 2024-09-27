@@ -2,10 +2,12 @@ using Domain.DTOs;
 
 using ExpenseTrackerGroup3.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
-
+[Authorize]
 [ApiController]
 [Route("api/v1/[controller]")]
 public class BudgetController : ControllerBase
@@ -53,9 +55,18 @@ public class BudgetController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteBudget(Guid budgetId, Guid userId)
     {
-        await _budgetService.DeleteBudgetAsync(budgetId, userId);
-        return NoContent();
+        try
+        {
+            await _budgetService.DeleteBudgetAsync(budgetId, userId);
+            const string succesfullyMessage = "Bugdet deleted succesfully";
+            return Ok(succesfullyMessage);
+        }
+        catch (Exception e)
+        {
+            return HandleException(e);
+        }
     }
+
 
     [HttpGet("{userId}/remaining")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]

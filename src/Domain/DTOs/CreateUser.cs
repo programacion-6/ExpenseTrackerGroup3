@@ -6,8 +6,7 @@ public record CreateUser
 (
   string Name,
   string Email,
-  string PasswordHash,
-  DateTime CreatedAt
+  string Password
 )
 {
   public User ToDomain()
@@ -16,8 +15,7 @@ public record CreateUser
     {
       Name = Name,
       Email = Email,
-      PasswordHash = PasswordHash,
-      CreatedAt = CreatedAt
+      PasswordHash = Password
     };
   }
 }
