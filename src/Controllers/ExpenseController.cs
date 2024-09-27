@@ -2,10 +2,13 @@ using Domain.DTOs;
 
 using ExpenseTrackerGroup3.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
+[Authorize]
 public class ExpenseController : BaseController
 {
     private readonly IExpenseService _expenseService;

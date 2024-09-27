@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
+[Authorize]
 public class UserController : BaseController
 {
     private readonly IUserService _userService;
@@ -19,7 +20,6 @@ public class UserController : BaseController
     }
 
     [HttpGet("{userId}/profile")]
-    [Authorize]
     public async Task<ActionResult> GetUserProfile(Guid userId)
     {
         try
@@ -35,7 +35,6 @@ public class UserController : BaseController
     }
 
     [HttpPut("{userId}/profile")]
-    [Authorize]
     public async Task<ActionResult> UpdateUserProfile(Guid userId, [FromBody] UpdateUserDTO user)
     {
         try

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
-
+[Authorize]
 public class BudgetController : BaseController
 {
     private readonly IBudgetService _budgetService;
@@ -18,7 +18,6 @@ public class BudgetController : BaseController
     }
 
     [HttpPost("{userId}")]
-    [Authorize]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddBudget(Guid userId, [FromBody] CreateBudget budget)
@@ -37,7 +36,6 @@ public class BudgetController : BaseController
     }
 
     [HttpGet("{userId}/{month}")]
-    [Authorize]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMonthlyBudget(Guid userId, DateTime month)
@@ -55,7 +53,6 @@ public class BudgetController : BaseController
     }
 
     [HttpPut("{userId}/{budgetId}")]
-    [Authorize]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -74,7 +71,6 @@ public class BudgetController : BaseController
     }
 
     [HttpDelete("{userId}/{budgetId}")]
-    [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteBudget(Guid budgetId, Guid userId)
@@ -93,7 +89,6 @@ public class BudgetController : BaseController
 
 
     [HttpGet("{userId}/remaining")]
-    [Authorize]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRemainingBudget(Guid userId)
@@ -110,7 +105,6 @@ public class BudgetController : BaseController
     }
 
     [HttpGet("{userId}/{month}/status")]
-    [Authorize]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CheckBudgetStatus(Guid userId, DateTime month)
