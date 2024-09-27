@@ -3,6 +3,8 @@ using Domain.DTOs;
 using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
@@ -29,7 +31,7 @@ public class AuthController : BaseController
         }
         catch (Exception e)
         {
-            
+
             return HandleException(e);
         }
     }
@@ -47,7 +49,41 @@ public class AuthController : BaseController
         }
         catch (Exception e)
         {
-            
+
+            return HandleException(e);
+        }
+    }
+
+    [HttpPost("requestResetPassword")]
+    [Authorize]
+    [ProducesResponseType(typeof(RequestResetPassword), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> RequestResetPassword([FromBody] RequestResetPassword request)
+    {
+        try
+        {
+            await _authService.RequestResetPasswordAsync(request);
+            return Ok("Reset password email sent, check your inbox.");
+        }
+        catch (Exception e)
+        {
+            return HandleException(e);
+        }
+    }
+
+    [HttpPut("resetPassword")]
+    [Authorize]
+    [ProducesResponseType(typeof(ResetPassword), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> ResetPassword([FromBody] ResetPassword reset)
+    {
+        try
+        {
+            await _authService.ResetPasswordAsync(reset);
+            return Ok("Password has been reset successfully.");
+        }
+        catch (Exception e)
+        {
             return HandleException(e);
         }
     }
