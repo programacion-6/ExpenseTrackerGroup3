@@ -3,10 +3,13 @@ using Domain.DTOs;
 using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
+[Authorize]
 public class UserController : BaseController
 {
     private readonly IUserService _userService;
@@ -19,12 +22,13 @@ public class UserController : BaseController
     [HttpGet("{userId}/profile")]
     public async Task<ActionResult> GetUserProfile(Guid userId)
     {
-        try {
+        try
+        {
             var user = await _userService.GetUserProfileAsync(userId);
             var response = ResponseUser.FromDomain(user);
             return Ok(response);
-        } 
-        catch (Exception e) 
+        }
+        catch (Exception e)
         {
             return HandleException(e);
         }
