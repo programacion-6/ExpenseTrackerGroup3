@@ -46,6 +46,13 @@ public class AuthService : IAuthService
 
     public async Task<User> RegisterUserAsync(CreateUser user)
     {
+        var existingUser = _userRepository.GetByEmailAsync(user.Email);
+
+        if (existingUser != null)
+        {
+            throw new ArgumentException("Registration could not be completed. Please check your information and try again.");
+        }
+
         var passwordHashed = _passwordHasher.HashPassword(user.Password);
 
         var newUser = new User
@@ -95,5 +102,4 @@ public class AuthService : IAuthService
 
         await _userRepository.UpdateAsync(user);
     }
-
 }
