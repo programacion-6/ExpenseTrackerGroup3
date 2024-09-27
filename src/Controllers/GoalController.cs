@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExpenseTrackerGroup3.Controllers;
 
 [Authorize]
-public class GoalController : BaseController
+[ApiController]
+[Route("api/v1/[controller]")]
+public class GoalController : ControllerBase
 {
     private readonly IGoalService _goalService;
 
@@ -21,16 +23,9 @@ public class GoalController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddGoal(Guid userId, [FromBody] CreateGoal goal)
     {
-        try
-        {
-            var newGoal = await _goalService.CreateGoalAsync(userId, goal);
-            var response = ResponseGoal.FromDomain(newGoal);
-            return CreatedAtAction(nameof(GetActiveGoals), new { userId }, response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var newGoal = await _goalService.CreateGoalAsync(userId, goal);
+        var response = ResponseGoal.FromDomain(newGoal);
+        return CreatedAtAction(nameof(GetActiveGoals), new { userId }, response);
     }
 
     [HttpPut("{userId}/{goalId}")]
@@ -39,16 +34,9 @@ public class GoalController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateGoal(Guid userId, Guid goalId, [FromBody] CreateGoal goal)
     {
-        try
-        {
-            var updatedGoal = await _goalService.UpdateGoalAsync(userId, goalId, goal);
-            var response = ResponseGoal.FromDomain(updatedGoal);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var updatedGoal = await _goalService.UpdateGoalAsync(userId, goalId, goal);
+        var response = ResponseGoal.FromDomain(updatedGoal);
+        return Ok(response);
     }
 
     [HttpGet("{userId}/active")]
@@ -56,16 +44,9 @@ public class GoalController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetActiveGoals(Guid userId)
     {
-        try
-        {
-            var activeGoals = await _goalService.GetActiveGoalsAsync(userId);
-            var response = activeGoals.Select(ResponseGoal.FromDomain);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var activeGoals = await _goalService.GetActiveGoalsAsync(userId);
+        var response = activeGoals.Select(ResponseGoal.FromDomain);
+        return Ok(response);
     }
 
     [HttpDelete("{userId}/{goalId}")]
@@ -74,19 +55,12 @@ public class GoalController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteGoal(Guid userId, Guid goalId)
     {
-        try
+        var result = await _goalService.DeleteGoalAsync(goalId, userId);
+        if (!result)
         {
-            var result = await _goalService.DeleteGoalAsync(goalId, userId);
-            if (!result)
-            {
-                return NotFound("Goal not found or belongs to another user.");
-            }
-            return Ok("Goal deleted successfully.");
+            return NotFound("Goal not found or belongs to another user.");
         }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        return Ok("Goal deleted successfully.");
     }
 
     [HttpGet("{userId}/{goalId}/progress")]
@@ -94,15 +68,8 @@ public class GoalController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetGoalProgress(Guid userId, Guid goalId)
     {
-        try
-        {
-            var progress = await _goalService.TrackGoalProgressAsync(userId, goalId);
-            return Ok(progress);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var progress = await _goalService.TrackGoalProgressAsync(userId, goalId);
+        return Ok(progress);
     }
 
     [HttpPut("{userId}/{goalId}/{amount}/progress")]
@@ -111,15 +78,8 @@ public class GoalController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateGoalProgress(Guid userId, Guid goalId, decimal amount)
     {
-        try
-        {
-            var UpdateGoal = await _goalService.UpdateGoalProgressAsync(userId, goalId, amount);
-            var response = ResponseGoal.FromDomain(UpdateGoal);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var UpdateGoal = await _goalService.UpdateGoalProgressAsync(userId, goalId, amount);
+        var response = ResponseGoal.FromDomain(UpdateGoal);
+        return Ok(response);
     }
 }

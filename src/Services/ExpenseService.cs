@@ -3,6 +3,7 @@ using Domain.Entities;
 
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
+using ExpenseTrackerGroup3.Exceptions;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -22,7 +23,7 @@ public class ExpenseService : IExpenseService
         var user = await _userRepository.GetByIdAsync(userId);
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var newExpense = new Expense
@@ -41,7 +42,7 @@ public class ExpenseService : IExpenseService
 
         if (result == false)
         {
-            throw new ArgumentException("Failed to create an Expense");
+            throw new InternalServerErrorException("Failed to create an Expense");
         }
 
         return newExpense;
@@ -53,7 +54,7 @@ public class ExpenseService : IExpenseService
 
         if (!userExpenses.Any())
         {
-            throw new ArgumentException("No expenses found for the user");
+            throw new NotFoundException("No expenses found for the user");
         }
 
         return userExpenses;
@@ -82,7 +83,7 @@ public class ExpenseService : IExpenseService
 
         if (!categoryExpenses.Any())
         {
-            throw new ArgumentException("Invalid category");
+            throw new InternalServerErrorException("Invalid category");
         }
 
         return categoryExpenses;
@@ -94,14 +95,14 @@ public class ExpenseService : IExpenseService
 
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var existingExpense = await _expenseRepository.GetByIdAsync(expenseId);
 
         if (existingExpense == null || existingExpense.UserId != userId)
         {
-            throw new ArgumentException("This user does not have this expense asociated");
+            throw new NotFoundException("This user does not have this expense asociated");
         }
 
         existingExpense.Amount = expense.Amount;
@@ -113,7 +114,7 @@ public class ExpenseService : IExpenseService
 
         if (!await _expenseRepository.UpdateAsync(existingExpense))
         {
-            throw new ArgumentException("Error updating the expense");
+            throw new InternalServerErrorException("Error updating the expense");
         };
 
         return existingExpense;
@@ -125,14 +126,14 @@ public class ExpenseService : IExpenseService
 
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var expense = await _expenseRepository.GetByIdAsync(expenseId);
 
         if (expense == null || expense.UserId != userId)
         {
-            throw new ArgumentException("This user does not have this expense asociated");
+            throw new NotFoundException("This user does not have this expense asociated");
         }
 
         return await _expenseRepository.DeleteAsync(expense.Id);
@@ -144,7 +145,7 @@ public class ExpenseService : IExpenseService
 
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         DateTime? mostExpensiveMonth = await _expenseRepository.GetMostExpensiveMonthByUserId(userId);
@@ -163,7 +164,7 @@ public class ExpenseService : IExpenseService
 
         if (user == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         IEnumerable<Expense> userExpenses = await _expenseRepository.GetAllByUserId(userId);

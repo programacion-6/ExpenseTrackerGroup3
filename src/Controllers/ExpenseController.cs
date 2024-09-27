@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace ExpenseTrackerGroup3.Controllers;
 
 [Authorize]
-public class ExpenseController : BaseController
+[ApiController]
+[Route("api/v1/[controller]")]
+public class ExpenseController : ControllerBase
 {
     private readonly IExpenseService _expenseService;
 
@@ -23,16 +25,9 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddExpense(Guid userId, [FromBody] CreateExpense expense)
     {
-        try
-        {
-            var newExpense = await _expenseService.AddExpenseAsync(userId, expense);
-            var response = ResponseExpense.FromDomain(newExpense);
-            return CreatedAtAction(nameof(GetExpensesByUserId), new { userId = userId }, response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var newExpense = await _expenseService.AddExpenseAsync(userId, expense);
+        var response = ResponseExpense.FromDomain(newExpense);
+        return CreatedAtAction(nameof(GetExpensesByUserId), new { userId = userId }, response);
     }
 
     [HttpGet("{userId}")]
@@ -40,16 +35,9 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetExpensesByUserId(Guid userId)
     {
-        try
-        {
-            var expenses = await _expenseService.GetExpenseByUserIdAsync(userId);
-            var response = expenses.Select(e => ResponseExpense.FromDomain(e));
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var expenses = await _expenseService.GetExpenseByUserIdAsync(userId);
+        var response = expenses.Select(e => ResponseExpense.FromDomain(e));
+        return Ok(response);
     }
 
     [HttpGet("{userId}/highest-category")]
@@ -57,15 +45,8 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetHighestExpenseCategory(Guid userId)
     {
-        try
-        {
-            var category = await _expenseService.GetHighestExpenseUserCategoryAsync(userId);
-            return Ok(category);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var category = await _expenseService.GetHighestExpenseUserCategoryAsync(userId);
+        return Ok(category);
     }
 
     [HttpGet("{userId}/category")]
@@ -73,16 +54,9 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetExpensesByCategory(Guid userId, [FromQuery] DateTime month, [FromQuery] string category)
     {
-        try
-        {
-            var expenses = await _expenseService.GetUserExpensesByCategoryAsync(userId, month, category);
-            var response = expenses.Select(e => ResponseExpense.FromDomain(e));
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var expenses = await _expenseService.GetUserExpensesByCategoryAsync(userId, month, category);
+        var response = expenses.Select(e => ResponseExpense.FromDomain(e));
+        return Ok(response);
     }
 
     [HttpPut("{userId}/{expenseId}")]
@@ -90,16 +64,9 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateExpense(Guid userId, Guid expenseId, [FromBody] CreateExpense expense)
     {
-        try
-        {
-            var updatedExpense = await _expenseService.UpdateExpenseAsync(userId, expenseId, expense);
-            var response = ResponseExpense.FromDomain(updatedExpense);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var updatedExpense = await _expenseService.UpdateExpenseAsync(userId, expenseId, expense);
+        var response = ResponseExpense.FromDomain(updatedExpense);
+        return Ok(response);
     }
 
     [HttpDelete("{userId}/{expenseId}")]
@@ -107,16 +74,9 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteExpense(Guid userId, Guid expenseId)
     {
-        try
-        {
-            await _expenseService.DeleteExpense(userId, expenseId);
-            const string succesfullyMessage = "Expense deleted succesfully";
-            return Ok(succesfullyMessage);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        await _expenseService.DeleteExpense(userId, expenseId);
+        const string succesfullyMessage = "Expense deleted succesfully";
+        return Ok(succesfullyMessage);
     }
 
     [HttpGet("{userId}/most-expensive-month")]
@@ -124,15 +84,8 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMostExpensiveMonth(Guid userId)
     {
-        try
-        {
-            var month = await _expenseService.GetUserMostExpensiveMonth(userId);
-            return Ok(month);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var month = await _expenseService.GetUserMostExpensiveMonth(userId);
+        return Ok(month);
     }
 
     [HttpGet("{userId}/recurring-expenses")]
@@ -140,15 +93,8 @@ public class ExpenseController : BaseController
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRecurringExpenses(Guid userId)
     {
-        try
-        {
-            var expenses = await _expenseService.GetUserRecurringExpense(userId);
-            var response = expenses.Select(e => ResponseExpense.FromDomain(e));
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var expenses = await _expenseService.GetUserRecurringExpense(userId);
+        var response = expenses.Select(e => ResponseExpense.FromDomain(e));
+        return Ok(response);
     }
 }

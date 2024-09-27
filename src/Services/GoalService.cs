@@ -2,6 +2,7 @@
 using Domain.DTOs;
 using Domain.Entities;
 
+using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 
@@ -23,7 +24,7 @@ public class GoalService : IGoalService
         var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var newGoal = new Goal
@@ -39,7 +40,7 @@ public class GoalService : IGoalService
         var success = await _goalRepository.CreateAsync(newGoal);
         if (!success)
         {
-            throw new Exception("Failed to create goal");
+            throw new InternalServerErrorException("Failed to create goal");
         }
 
         return newGoal;
@@ -50,13 +51,13 @@ public class GoalService : IGoalService
         var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var goalExists = await _goalRepository.GetByIdAsync(goalId);
         if (goalExists == null || goalExists.UserId != userId )
         {
-            throw new ArgumentException("This goal does not exist or Goal belongs to another user");
+            throw new BadRequestException("This goal does not exist or Goal belongs to another user");
         }
 
         return await _goalRepository.DeleteAsync(goalId);
@@ -67,7 +68,7 @@ public class GoalService : IGoalService
         var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }   
         
         return await _goalRepository.GetActiveGoalsByUserIdAsync(userId);
@@ -78,7 +79,7 @@ public class GoalService : IGoalService
         var goalExists = await _goalRepository.GetByIdAsync(goalId);
         if (goalExists == null)
         {
-            throw new ArgumentException("Goal not found");
+            throw new NotFoundException("Goal not found");
         }
 
         return goalExists;
@@ -89,7 +90,7 @@ public class GoalService : IGoalService
          var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var goals = await _goalRepository.GetGoalsByUserIdAsync(userId);
@@ -101,13 +102,13 @@ public class GoalService : IGoalService
         var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var goal = await _goalRepository.GetByIdAsync(goalId);
         if (goal == null || goal.UserId != userId)
         {
-            throw new ArgumentException("This goal does not exist or belongs to another user");
+            throw new BadRequestException("This goal does not exist or belongs to another user");
         }
 
         return await _goalRepository.GetGoalProgressAsync(goalId);
@@ -118,13 +119,13 @@ public class GoalService : IGoalService
         var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var goal = await _goalRepository.GetByIdAsync(goalId);
         if (goal == null || goal.UserId != userId)
         {
-            throw new ArgumentException("This goal does not exist or belongs to another user");
+            throw new BadRequestException("This goal does not exist or belongs to another user");
         }
 
         goal.CurrentAmount += amount;
@@ -138,13 +139,13 @@ public class GoalService : IGoalService
         var userExists = await _userRepository.GetByIdAsync(userId);
         if (userExists == null)
         {
-            throw new ArgumentException("User not found");
+            throw new NotFoundException("User not found");
         }
 
         var existingGoal = await _goalRepository.GetByIdAsync(goalId);
         if (existingGoal == null || existingGoal.UserId != userId)
         {
-            throw new ArgumentException("This goal does not exist or belongs to another user");
+            throw new BadRequestException("This goal does not exist or belongs to another user");
         }
 
         existingGoal.GoalAmount = goal.GoalAmount;
@@ -154,7 +155,7 @@ public class GoalService : IGoalService
 
         if(!await _goalRepository.UpdateAsync(existingGoal))
         {
-            throw new ArgumentException("Error updating the goal");
+            throw new InternalServerErrorException("Error updating the goal");
         };
 
         return existingGoal;

@@ -54,17 +54,10 @@ public class BudgetController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteBudget(Guid budgetId, Guid userId)
-    {
-        try
-        {
-            await _budgetService.DeleteBudgetAsync(budgetId, userId);
-            const string succesfullyMessage = "Bugdet deleted succesfully";
-            return Ok(succesfullyMessage);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+    {        
+        await _budgetService.DeleteBudgetAsync(budgetId, userId);
+        const string succesfullyMessage = "Bugdet deleted succesfully";
+        return Ok(succesfullyMessage);
     }
 
 
