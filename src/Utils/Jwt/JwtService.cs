@@ -47,9 +47,8 @@ public class JwtService : IJwtService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string ValidateToken(string token)
+    public string ValidateToken(string token, string expectedTokenType)
     {
-
         var code = _jwtOptions.JwtCode;
 
         if (code == null)
@@ -72,8 +71,14 @@ public class JwtService : IJwtService
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var email = jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
 
+            var tokenType = jwtToken.Claims.First(x => x.Type == "tokenType").Value;
+            if (tokenType != expectedTokenType)
+            {
+                throw new SecurityTokenException("Invalid token type");
+            }
+
+            var email = jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
             return email;
         }
         catch

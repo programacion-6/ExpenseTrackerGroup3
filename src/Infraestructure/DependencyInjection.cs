@@ -6,6 +6,7 @@ using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils;
+using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Hasher.Interfaces;
 using ExpenseTrackerGroup3.Utils.Jwt;
 using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
@@ -61,6 +62,8 @@ public static class DependencyInjection
         services.AddScoped<IPasswordHasher, PasswordHasher>();
         services.AddScoped<IJwtService, JwtService>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddTransient<IEmailSender, EmailSender>();
+        services.AddSingleton<SmtpOptions>();
         return services;
     }
 }
