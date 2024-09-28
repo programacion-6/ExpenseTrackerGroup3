@@ -37,11 +37,11 @@ public static class ValidatorExtensions
         }
     }
 
-    public static void ThrowIfInvalidToken(this string? email, string message)
+    public static void ThrowIfExists<T>(this IEnumerable<T> collection, string message)
+    {
+        if (collection.Any())
         {
-            if (string.IsNullOrEmpty(email))
-            {
-                throw new BadRequestException(message);
-            }
+            throw new BadRequestException(message);
         }
+    }
 }
