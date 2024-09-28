@@ -10,7 +10,7 @@ namespace ExpenseTrackerGroup3.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/users/{userId}/expenses")]
 public class ExpenseController : ControllerBase
 {
     private readonly IExpenseService _expenseService;
@@ -20,7 +20,7 @@ public class ExpenseController : ControllerBase
         _expenseService = expenseService;
     }
 
-    [HttpPost("{userId}")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseExpense), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddExpense(Guid userId, [FromBody] CreateExpense expense)
@@ -30,7 +30,7 @@ public class ExpenseController : ControllerBase
         return CreatedAtAction(nameof(GetExpensesByUserId), new { userId = userId }, response);
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<ResponseExpense>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetExpensesByUserId(Guid userId)
@@ -40,7 +40,7 @@ public class ExpenseController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("{userId}/highest-category")]
+    [HttpGet("highest-category")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetHighestExpenseCategory(Guid userId)
@@ -49,7 +49,7 @@ public class ExpenseController : ControllerBase
         return Ok(category);
     }
 
-    [HttpGet("{userId}/category")]
+    [HttpGet("category")]
     [ProducesResponseType(typeof(IEnumerable<ResponseExpense>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetExpensesByCategory(Guid userId, [FromQuery] DateTime month, [FromQuery] string category)
@@ -59,7 +59,7 @@ public class ExpenseController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPut("{userId}/{expenseId}")]
+    [HttpPut("{expenseId}")]
     [ProducesResponseType(typeof(ResponseExpense), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateExpense(Guid userId, Guid expenseId, [FromBody] CreateExpense expense)
@@ -69,7 +69,7 @@ public class ExpenseController : ControllerBase
         return Ok(response);
     }
 
-    [HttpDelete("{userId}/{expenseId}")]
+    [HttpDelete("{expenseId}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteExpense(Guid userId, Guid expenseId)
@@ -79,7 +79,7 @@ public class ExpenseController : ControllerBase
         return Ok(succesfullyMessage);
     }
 
-    [HttpGet("{userId}/most-expensive-month")]
+    [HttpGet("most-expensive-month")]
     [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMostExpensiveMonth(Guid userId)
@@ -88,7 +88,7 @@ public class ExpenseController : ControllerBase
         return Ok(month);
     }
 
-    [HttpGet("{userId}/recurring-expenses")]
+    [HttpGet("recurring-expenses")]
     [ProducesResponseType(typeof(IEnumerable<ResponseExpense>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetRecurringExpenses(Guid userId)

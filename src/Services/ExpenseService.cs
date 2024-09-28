@@ -4,6 +4,7 @@ using Domain.Entities;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Exceptions;
+using ExpenseTrackerGroup3.Utils.Exception;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -21,10 +22,7 @@ public class ExpenseService : IExpenseService
     public async Task<Expense> AddExpenseAsync(Guid userId, CreateExpense expense)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-        if (user == null)
-        {
-            throw new NotFoundException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
         var newExpense = new Expense
         {
@@ -39,11 +37,7 @@ public class ExpenseService : IExpenseService
         };
 
         var result = await _expenseRepository.CreateAsync(newExpense);
-
-        if (result == false)
-        {
-            throw new InternalServerErrorException("Failed to create an Expense");
-        }
+        result.ThrowIfOperationFailed("Failed to create an Expense");
 
         return newExpense;
     }
@@ -51,11 +45,7 @@ public class ExpenseService : IExpenseService
     public async Task<IEnumerable<Expense>> GetExpenseByUserIdAsync(Guid userId)
     {
         IEnumerable<Expense> userExpenses = await _expenseRepository.GetAllByUserId(userId);
-
-        if (!userExpenses.Any())
-        {
-            throw new NotFoundException("No expenses found for the user");
-        }
+        userExpenses.ThrowIfEmpty("No expenses found for the user");
 
         return userExpenses;
     }
@@ -63,13 +53,7 @@ public class ExpenseService : IExpenseService
     public async Task<string> GetHighestExpenseUserCategoryAsync(Guid userId)
     {
         string? highestCategory = await _expenseRepository.GetHighestSpendingCategoryByUserId(userId);
-
-        if (highestCategory == null)
-        {
-            return "No category found";
-        }
-
-        return highestCategory;
+        return highestCategory ?? "No category found";
     }
 
     public async Task<IEnumerable<Expense>> GetUserExpensesByCategoryAsync(Guid userId, DateTime month, string category)
@@ -81,10 +65,7 @@ public class ExpenseService : IExpenseService
             .Equals(category, StringComparison.OrdinalIgnoreCase) 
             && expense.Date.Month.Equals(month.Month));
 
-        if (!categoryExpenses.Any())
-        {
-            throw new InternalServerErrorException("Invalid category");
-        }
+        categoryExpenses.ThrowIfEmpty("Invalid category");
 
         return categoryExpenses;
     }
@@ -92,11 +73,7 @@ public class ExpenseService : IExpenseService
     public async Task<Expense> UpdateExpenseAsync(Guid userId, Guid expenseId, CreateExpense expense)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null)
-        {
-            throw new NotFoundException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
         var existingExpense = await _expenseRepository.GetByIdAsync(expenseId);
 
@@ -112,10 +89,8 @@ public class ExpenseService : IExpenseService
         existingExpense.CreatedAt = expense.Date;
         existingExpense.RecurringExpense = expense.RecurringExpense;
 
-        if (!await _expenseRepository.UpdateAsync(existingExpense))
-        {
-            throw new InternalServerErrorException("Error updating the expense");
-        };
+        var success = await _expenseRepository.UpdateAsync(existingExpense);
+        success.ThrowIfOperationFailed("Failed to update expense");
 
         return existingExpense;
     }
@@ -123,11 +98,7 @@ public class ExpenseService : IExpenseService
     public async Task<bool> DeleteExpense(Guid userId, Guid expenseId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null)
-        {
-            throw new NotFoundException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
         var expense = await _expenseRepository.GetByIdAsync(expenseId);
 
@@ -142,31 +113,18 @@ public class ExpenseService : IExpenseService
     public async Task<string> GetUserMostExpensiveMonth(Guid userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null)
-        {
-            throw new NotFoundException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
         DateTime? mostExpensiveMonth = await _expenseRepository.GetMostExpensiveMonthByUserId(userId);
 
-        if (mostExpensiveMonth == null)
-        {
-            return "No expense found for the user";
-        }
-
-        return mostExpensiveMonth.Value.ToString("MMMM yyyy");
+        return mostExpensiveMonth.Value.ToString("MMMM yyyy") ?? "No expense found for the user";
     }
 
     public async Task<IEnumerable<Expense>> GetUserRecurringExpense(Guid userId)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null)
-        {
-            throw new NotFoundException("User not found");
-        }
-
+        user.ThrowIfNull("User not found");
+        
         IEnumerable<Expense> userExpenses = await _expenseRepository.GetAllByUserId(userId);
 
         var userRecurringExpense = userExpenses

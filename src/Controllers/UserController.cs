@@ -10,7 +10,7 @@ namespace ExpenseTrackerGroup3.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/users")]
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -24,7 +24,7 @@ public class UserController : ControllerBase
     public async Task<ActionResult<ResponseUser>> GetUserProfile(Guid userId)
     {
         var user = await _userService.GetUserProfileAsync(userId);
-        return Ok(ResponseUser.FromDomain(user));
+        return Ok(ResponseUser.FromDomain(user!));
     }
 
     [HttpPut("{userId}/profile")]

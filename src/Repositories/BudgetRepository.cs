@@ -36,17 +36,16 @@ public class BudgetRepository : IBudgetRepository
         return affectedRows > 0;
     }
 
-    public async Task<decimal> GetBudgetByUserAsync(Guid userId)
+    public async Task<Budget?> GetBudgetByUserAsync(Guid userId)
     {
         const string sql = @"
-        SELECT COALESCE(BudgetAmount, 0) AS BudgetAmount
-        FROM Budget
-        WHERE UserId = @UserId";
+            SELECT * 
+            FROM Budget
+            WHERE UserId = @UserId";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
-        return await connection.QuerySingleOrDefaultAsync<decimal>(sql, new { UserId = userId });
+        return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { UserId = userId });
     }
-
 
     public async Task<IEnumerable<Budget>> GetAllAsync()
     {
@@ -84,5 +83,15 @@ public class BudgetRepository : IBudgetRepository
         using var connection = await _dbConnection.CreateConnectionAsync();
         var affectedRows = await connection.ExecuteAsync(sql, item);
         return affectedRows > 0;
+    }
+
+    public async Task<IEnumerable<Budget>> GetBudgetsByUserAsync(Guid userId)
+    {
+        const string sql = @"
+        SELECT * FROM Budget
+        WHERE UserId = @UserId";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        return await connection.QueryAsync<Budget>(sql, new { UserId = userId });
     }
 }

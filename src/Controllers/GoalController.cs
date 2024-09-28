@@ -8,7 +8,7 @@ namespace ExpenseTrackerGroup3.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/users/{userId}/goals")]
 public class GoalController : ControllerBase
 {
     private readonly IGoalService _goalService;
@@ -18,7 +18,7 @@ public class GoalController : ControllerBase
         _goalService = goalService;
     }
 
-    [HttpPost("{userId}")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseGoal), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddGoal(Guid userId, [FromBody] CreateGoal goal)
@@ -28,7 +28,7 @@ public class GoalController : ControllerBase
         return CreatedAtAction(nameof(GetActiveGoals), new { userId }, response);
     }
 
-    [HttpPut("{userId}/{goalId}")]
+    [HttpPut("{goalId}")]
     [ProducesResponseType(typeof(ResponseGoal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,7 +39,7 @@ public class GoalController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("{userId}/active")]
+    [HttpGet("active")]
     [ProducesResponseType(typeof(IEnumerable<ResponseGoal>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetActiveGoals(Guid userId)
@@ -49,7 +49,7 @@ public class GoalController : ControllerBase
         return Ok(response);
     }
 
-    [HttpDelete("{userId}/{goalId}")]
+    [HttpDelete("{goalId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -63,7 +63,7 @@ public class GoalController : ControllerBase
         return Ok("Goal deleted successfully.");
     }
 
-    [HttpGet("{userId}/{goalId}/progress")]
+    [HttpGet("{goalId}/progress")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetGoalProgress(Guid userId, Guid goalId)
@@ -72,7 +72,7 @@ public class GoalController : ControllerBase
         return Ok(progress);
     }
 
-    [HttpPut("{userId}/{goalId}/{amount}/progress")]
+    [HttpPut("{goalId}/{amount}/progress")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -11,7 +11,7 @@ namespace ExpenseTrackerGroup3.Controllers;
 
 [Authorize]
 [ApiController]
-[Route("api/v1/[controller]")]
+[Route("api/v1/users/{userId}/income")]
 public class IncomeController : ControllerBase
 {
     private readonly IIncomeService _incomeService;
@@ -21,7 +21,7 @@ public class IncomeController : ControllerBase
         _incomeService = incomeService;
     }
 
-    [HttpPost("{userId}")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> AddIncome(Guid userId, [FromBody] CreateIncome income)
@@ -30,7 +30,7 @@ public class IncomeController : ControllerBase
         return Ok(newIncome);
     }
 
-    [HttpGet("{userId}")]
+    [HttpGet]
     [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetIncomesByUserId(Guid userId)
@@ -39,7 +39,7 @@ public class IncomeController : ControllerBase
         return Ok(income);
     }
 
-    [HttpGet("{userId}/{month}")]
+    [HttpGet("{month}")]
     [ProducesResponseType(typeof(ResponseIncome), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetMonthlyIncome(Guid userId, DateTime month)
