@@ -1,15 +1,11 @@
 using Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
-
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
-[Authorize]
-[ApiController]
-[Route("api/v1/users/{userId}/goals")]
-public class GoalController : ControllerBase
+[Route("api/v1/users/goals")]
+public class GoalController : ApiControllerBase
 {
     private readonly IGoalService _goalService;
 
@@ -21,8 +17,9 @@ public class GoalController : ControllerBase
     [HttpPost]
     [ProducesResponseType(typeof(ResponseGoal), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddGoal(Guid userId, [FromBody] CreateGoal goal)
+    public async Task<IActionResult> AddGoal([FromBody] CreateGoal goal)
     {
+        var userId = GetAuthenticatedUserId();
         var newGoal = await _goalService.CreateGoalAsync(userId, goal);
         var response = ResponseGoal.FromDomain(newGoal);
         return CreatedAtAction(nameof(GetActiveGoals), new { userId }, response);
@@ -32,8 +29,9 @@ public class GoalController : ControllerBase
     [ProducesResponseType(typeof(ResponseGoal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateGoal(Guid userId, Guid goalId, [FromBody] CreateGoal goal)
+    public async Task<IActionResult> UpdateGoal(Guid goalId, [FromBody] CreateGoal goal)
     {
+        var userId = GetAuthenticatedUserId();
         var updatedGoal = await _goalService.UpdateGoalAsync(userId, goalId, goal);
         var response = ResponseGoal.FromDomain(updatedGoal);
         return Ok(response);
@@ -42,8 +40,9 @@ public class GoalController : ControllerBase
     [HttpGet("active")]
     [ProducesResponseType(typeof(IEnumerable<ResponseGoal>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetActiveGoals(Guid userId)
+    public async Task<IActionResult> GetActiveGoals()
     {
+        var userId = GetAuthenticatedUserId();
         var activeGoals = await _goalService.GetActiveGoalsAsync(userId);
         var response = activeGoals.Select(ResponseGoal.FromDomain);
         return Ok(response);
@@ -53,8 +52,9 @@ public class GoalController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteGoal(Guid userId, Guid goalId)
+    public async Task<IActionResult> DeleteGoal(Guid goalId)
     {
+        var userId = GetAuthenticatedUserId();
         var result = await _goalService.DeleteGoalAsync(goalId, userId);
         if (!result)
         {
@@ -66,8 +66,9 @@ public class GoalController : ControllerBase
     [HttpGet("{goalId}/progress")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetGoalProgress(Guid userId, Guid goalId)
+    public async Task<IActionResult> GetGoalProgress(Guid goalId)
     {
+        var userId = GetAuthenticatedUserId();
         var progress = await _goalService.TrackGoalProgressAsync(userId, goalId);
         return Ok(progress);
     }
@@ -76,8 +77,9 @@ public class GoalController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateGoalProgress(Guid userId, Guid goalId, decimal amount)
+    public async Task<IActionResult> UpdateGoalProgress(Guid goalId, decimal amount)
     {
+        var userId = GetAuthenticatedUserId();
         var UpdateGoal = await _goalService.UpdateGoalProgressAsync(userId, goalId, amount);
         var response = ResponseGoal.FromDomain(UpdateGoal);
         return Ok(response);

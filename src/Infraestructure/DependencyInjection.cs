@@ -52,9 +52,9 @@ public static class DependencyInjection
     {
         services.AddScoped<IBudgetService, BudgetService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped<IExpenseRepository, ExpenseRepository>();
-        services.AddScoped<IGoalRepository, GoalRepository>();
-        services.AddScoped<IIncomeRepository, IncomeRepository>();
+        services.AddScoped<IExpenseService, ExpenseService>();
+        services.AddScoped<IGoalService, GoalService>();
+        services.AddScoped<IIncomeService, IncomeService>();
         return services;
     }
 

@@ -39,7 +39,7 @@ public class AuthService : IAuthService
             throw new NotFoundException("Password is incorrect");
         }
 
-        return new LoginResponse(user.Email, _jwtService.GenerateToken(user.Email, "login", TimeSpan.FromHours(2)));
+        return new LoginResponse(user.Email, _jwtService.GenerateToken(user.Id, user.Email, "login", TimeSpan.FromHours(2)));
     }
 
     public async Task<User> RegisterUserAsync(CreateUser user)
@@ -69,7 +69,7 @@ public class AuthService : IAuthService
         var user = await _userRepository.GetByEmailAsync(request.Email);
         user.ThrowIfNull("User not found");
 
-        var resetToken = _jwtService.GenerateToken(user!.Email, "resetPassword", TimeSpan.FromHours(1));
+        var resetToken = _jwtService.GenerateToken(user!.Id, user!.Email, "resetPassword", TimeSpan.FromHours(1));
 
         await _emailSender.SendEmail(user.Email, "Reset Your Password", $"Copy the token to  reset your password: {resetToken}");
     }
