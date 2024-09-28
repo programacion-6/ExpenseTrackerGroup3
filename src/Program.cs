@@ -1,13 +1,13 @@
 using DotNetEnv;
 
 using ExpenseTrackerGroup3.Infraestructure;
+using ExpenseTrackerGroup3.Middleware;
 using ExpenseTrackerGroup3.RequestPipeline;
 
 var builder = WebApplication.CreateBuilder(args);
 Env.Load();
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -25,6 +25,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseHttpsRedirection();
 app.UseRouting();
 

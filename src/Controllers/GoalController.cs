@@ -1,13 +1,11 @@
 using Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
-
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
 
-[Authorize]
-public class GoalController : BaseController
+[Route("api/v1/users/goals")]
+public class GoalController : ApiControllerBase
 {
     private readonly IGoalService _goalService;
 
@@ -16,110 +14,74 @@ public class GoalController : BaseController
         _goalService = goalService;
     }
 
-    [HttpPost("{userId}")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseGoal), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddGoal(Guid userId, [FromBody] CreateGoal goal)
+    public async Task<IActionResult> AddGoal([FromBody] CreateGoal goal)
     {
-        try
-        {
-            var newGoal = await _goalService.CreateGoalAsync(userId, goal);
-            var response = ResponseGoal.FromDomain(newGoal);
-            return CreatedAtAction(nameof(GetActiveGoals), new { userId }, response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var newGoal = await _goalService.CreateGoalAsync(userId, goal);
+        var response = ResponseGoal.FromDomain(newGoal);
+        return CreatedAtAction(nameof(GetActiveGoals), new { userId }, response);
     }
 
-    [HttpPut("{userId}/{goalId}")]
+    [HttpPut("{goalId}")]
     [ProducesResponseType(typeof(ResponseGoal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateGoal(Guid userId, Guid goalId, [FromBody] CreateGoal goal)
+    public async Task<IActionResult> UpdateGoal(Guid goalId, [FromBody] CreateGoal goal)
     {
-        try
-        {
-            var updatedGoal = await _goalService.UpdateGoalAsync(userId, goalId, goal);
-            var response = ResponseGoal.FromDomain(updatedGoal);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var updatedGoal = await _goalService.UpdateGoalAsync(userId, goalId, goal);
+        var response = ResponseGoal.FromDomain(updatedGoal);
+        return Ok(response);
     }
 
-    [HttpGet("{userId}/active")]
+    [HttpGet("active")]
     [ProducesResponseType(typeof(IEnumerable<ResponseGoal>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetActiveGoals(Guid userId)
+    public async Task<IActionResult> GetActiveGoals()
     {
-        try
-        {
-            var activeGoals = await _goalService.GetActiveGoalsAsync(userId);
-            var response = activeGoals.Select(ResponseGoal.FromDomain);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var activeGoals = await _goalService.GetActiveGoalsAsync(userId);
+        var response = activeGoals.Select(ResponseGoal.FromDomain);
+        return Ok(response);
     }
 
-    [HttpDelete("{userId}/{goalId}")]
+    [HttpDelete("{goalId}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteGoal(Guid userId, Guid goalId)
+    public async Task<IActionResult> DeleteGoal(Guid goalId)
     {
-        try
+        var userId = GetAuthenticatedUserId();
+        var result = await _goalService.DeleteGoalAsync(goalId, userId);
+        if (!result)
         {
-            var result = await _goalService.DeleteGoalAsync(goalId, userId);
-            if (!result)
-            {
-                return NotFound("Goal not found or belongs to another user.");
-            }
-            return Ok("Goal deleted successfully.");
+            return NotFound("Goal not found or belongs to another user.");
         }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        return Ok("Goal deleted successfully.");
     }
 
-    [HttpGet("{userId}/{goalId}/progress")]
+    [HttpGet("{goalId}/progress")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetGoalProgress(Guid userId, Guid goalId)
+    public async Task<IActionResult> GetGoalProgress(Guid goalId)
     {
-        try
-        {
-            var progress = await _goalService.TrackGoalProgressAsync(userId, goalId);
-            return Ok(progress);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var progress = await _goalService.TrackGoalProgressAsync(userId, goalId);
+        return Ok(progress);
     }
 
-    [HttpPut("{userId}/{goalId}/{amount}/progress")]
+    [HttpPut("{goalId}/{amount}/progress")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateGoalProgress(Guid userId, Guid goalId, decimal amount)
+    public async Task<IActionResult> UpdateGoalProgress(Guid goalId, decimal amount)
     {
-        try
-        {
-            var UpdateGoal = await _goalService.UpdateGoalProgressAsync(userId, goalId, amount);
-            var response = ResponseGoal.FromDomain(UpdateGoal);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var UpdateGoal = await _goalService.UpdateGoalProgressAsync(userId, goalId, amount);
+        var response = ResponseGoal.FromDomain(UpdateGoal);
+        return Ok(response);
     }
 }

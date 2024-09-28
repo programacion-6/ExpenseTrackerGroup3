@@ -7,6 +7,6 @@ public interface IIncomeService
 {
     Task<Income> AddIncomeAsync(Guid userid, CreateIncome income);
     Task<IEnumerable<Income>> GetIncomesByUserIdAsync(Guid userId);
-    Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime month);
+    Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime date);
     Task<Income> UpdateIncomeAsync(Guid incomeId, UpdateIncome income);
 }

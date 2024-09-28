@@ -2,9 +2,11 @@ using Domain.DTOs;
 using Domain.Entities;
 
 using ExpenseTrackerGroup3.Domain.DTOs;
+using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.EmailSender;
+using ExpenseTrackerGroup3.Utils.Exception;
 using ExpenseTrackerGroup3.Utils.Hasher.Interfaces;
 using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
 
@@ -28,30 +30,22 @@ public class AuthService : IAuthService
     public async Task<LoginResponse> LoginUserAsync(string email, string password)
     {
         var user = await _userRepository.GetByEmailAsync(email);
+        user.ThrowIfNull("User not found");
 
-        if (user == null)
-        {
-            throw new ArgumentException("Invalid email or password");
-        }
-
-        bool verifiedPassword = _passwordHasher.VerifyPassword(user.PasswordHash, password);
+        bool verifiedPassword = _passwordHasher.VerifyPassword(user!.PasswordHash, password);
 
         if (!verifiedPassword)
         {
-            throw new ArgumentException("Invalid email or password");
+            throw new NotFoundException("Password is incorrect");
         }
 
-        return new LoginResponse(user.Email, _jwtService.GenerateToken(user.Email, "login", TimeSpan.FromHours(2)));
+        return new LoginResponse(user.Email, _jwtService.GenerateToken(user.Id, user.Email, "login", TimeSpan.FromHours(2)));
     }
 
     public async Task<User> RegisterUserAsync(CreateUser user)
     {
-        var existingUser = _userRepository.GetByEmailAsync(user.Email);
-
-        if (existingUser != null)
-        {
-            throw new ArgumentException("Registration could not be completed. Please check your information and try again.");
-        }
+        var existingUser = await _userRepository.GetByEmailAsync(user.Email);
+        existingUser.ThrowIfExists("Registration could not be completed. Please check your information and try again.");
 
         var passwordHashed = _passwordHasher.HashPassword(user.Password);
 
@@ -65,11 +59,7 @@ public class AuthService : IAuthService
         };
 
         var result = await _userRepository.CreateAsync(newUser);
-
-        if (!result)
-        {
-            throw new ArgumentException("Failed to register user");
-        }
+        result.ThrowIfOperationFailed("Failed to register user");
 
         return newUser;
     }
@@ -77,12 +67,9 @@ public class AuthService : IAuthService
     public async Task RequestResetPasswordAsync(RequestResetPassword request)
     {
         var user = await _userRepository.GetByEmailAsync(request.Email);
-        if (user == null)
-        {
-            throw new ArgumentException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
-        var resetToken = _jwtService.GenerateToken(user.Email, "resetPassword", TimeSpan.FromHours(1));
+        var resetToken = _jwtService.GenerateToken(user!.Id, user!.Email, "resetPassword", TimeSpan.FromHours(1));
 
         await _emailSender.SendEmail(user.Email, "Reset Your Password", $"Copy the token to  reset your password: {resetToken}");
     }
@@ -92,13 +79,10 @@ public class AuthService : IAuthService
         var email = _jwtService.ValidateToken(reset.Token, "resetPassword");
 
         var user = await _userRepository.GetByEmailAsync(email);
-        if (user == null)
-        {
-            throw new ArgumentException("Invalid token or user not found");
-        }
+        user.ThrowIfNull("User not found");
 
         var hashedPassword = _passwordHasher.HashPassword(reset.Password);
-        user.PasswordHash = hashedPassword;
+        user!.PasswordHash = hashedPassword;
 
         await _userRepository.UpdateAsync(user);
     }

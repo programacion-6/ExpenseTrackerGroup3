@@ -16,7 +16,7 @@ public class JwtService : IJwtService
         _jwtOptions = options.Value;
     }
 
-    public string GenerateToken(string email, string tokenType, TimeSpan tokenExpiration)
+    public string GenerateToken(Guid userId, string email, string tokenType, TimeSpan tokenExpiration)
     {
         var code = _jwtOptions.JwtCode;
 
@@ -31,7 +31,8 @@ public class JwtService : IJwtService
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, email),
+            new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
+            new Claim(ClaimTypes.Email, email),
             new Claim("tokenType", tokenType),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };

@@ -1,8 +1,8 @@
 using Domain.DTOs;
 using Domain.Entities;
-
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
+using ExpenseTrackerGroup3.Utils.Exception;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -20,11 +20,7 @@ public class IncomeService : IIncomeService
     public async Task<Income> AddIncomeAsync(Guid userId, CreateIncome income)
     {
         var user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null)
-        {
-            throw new ArgumentException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
         var newIncome = new Income
         {
@@ -36,11 +32,7 @@ public class IncomeService : IIncomeService
         };
 
         var success = await _incomeRepository.CreateAsync(newIncome);
-
-        if (!success)
-        {
-            throw new Exception("Failed to create income");
-        }
+        success.ThrowIfOperationFailed("Failed to create income");
 
         return newIncome;
     }
@@ -49,47 +41,29 @@ public class IncomeService : IIncomeService
     {
 
         User? user = await _userRepository.GetByIdAsync(userId);
-
-        if (user == null) 
-        {
-            throw new ArgumentException("User not found");
-        }
+        user.ThrowIfNull("User not found");
 
         IEnumerable<Income> income = await _incomeRepository.GetAllAsync();
 
         return income.Where(i => i.UserId == userId);
     }
 
-    public async Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime month)
+    public async Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime date)
     {
         User? user = await _userRepository.GetByIdAsync(userId);
+        user.ThrowIfNull("User not found");
 
-        if (user == null)
-        {
-            throw new ArgumentException("User not found");
-        }
-
-       IEnumerable<Income> incomes = await _incomeRepository.GetAllAsync();
-
-       return incomes.Where(i => i.UserId == userId && i.CreatedAt.Month == month.Month);
+       return await _incomeRepository.GetMonthlyIncomeByUserId(userId, date.Year, date.Month);
     }
 
     public async Task<Income> UpdateIncomeAsync(Guid incomeId, UpdateIncome income)
     {
         var existingIncome = await _incomeRepository.GetByIdAsync(incomeId);
-
-        if (existingIncome == null)
-            {
-                throw new ArgumentException("Income not found");
-            }
+        existingIncome.ThrowIfNull("Income not found");
         
-        existingIncome = income.ToDomain(existingIncome);
+        existingIncome = income.ToDomain(existingIncome!);
         var success = await _incomeRepository.UpdateAsync(existingIncome);
-
-        if (!success)
-            {
-                throw new Exception("Failed to update income");
-            }
+        success.ThrowIfOperationFailed("Failed to update income");
 
         return existingIncome;
     }   

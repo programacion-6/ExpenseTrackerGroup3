@@ -1,14 +1,11 @@
 using Domain.DTOs;
-
 using ExpenseTrackerGroup3.Services.Interfaces;
-
-using Microsoft.AspNetCore.Authorization;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace ExpenseTrackerGroup3.Controllers;
-[Authorize]
-public class BudgetController : BaseController
+
+[Route("api/v1/users/budgets")]
+public class BudgetController : ApiControllerBase
 {
     private readonly IBudgetService _budgetService;
 
@@ -17,106 +14,69 @@ public class BudgetController : BaseController
         _budgetService = budgetService;
     }
 
-    [HttpPost("{userId}")]
+    [HttpPost]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> AddBudget(Guid userId, [FromBody] CreateBudget budget)
+    public async Task<IActionResult> AddBudget([FromBody] CreateBudget budget)
     {
-        try
-        {
-            var newBudget = await _budgetService.AddBudgetAsync(userId, budget);
-            var response = ResponseBudget.FromDomain(newBudget);
-            return CreatedAtAction(nameof(GetMonthlyBudget), new { userId, month = budget.Month }, response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
-
+        var userId = GetAuthenticatedUserId();
+        var newBudget = await _budgetService.AddBudgetAsync(userId, budget);
+        var response = ResponseBudget.FromDomain(newBudget);
+        return CreatedAtAction(nameof(GetMonthlyBudget), new { userId, month = budget.Month }, response);
     }
 
-    [HttpGet("{userId}/{month}")]
+    [HttpGet("{month}")]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetMonthlyBudget(Guid userId, DateTime month)
+    public async Task<IActionResult> GetMonthlyBudget(DateTime month)
     {
-        try
-        {
-            var budget = await _budgetService.GetBudgetUserByMonthAsync(userId, month);
-            var response = ResponseBudget.FromDomain(budget);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var budget = await _budgetService.GetBudgetUserByMonthAsync(userId, month);
+        var response = ResponseBudget.FromDomain(budget!);
+        return Ok(response);
     }
 
-    [HttpPut("{userId}/{budgetId}")]
+    [HttpPut]
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateBudget(Guid userId, Guid budgetId, [FromBody] CreateBudget budget)
+    public async Task<IActionResult> UpdateBudget([FromBody] CreateBudget budget) // Here add for BudgetId
     {
-        try
-        {
-            var updatedBudget = await _budgetService.UpdateBudgetAsync(userId, budgetId, budget);
-            var response = ResponseBudget.FromDomain(updatedBudget);
-            return Ok(response);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var updatedBudget = await _budgetService.UpdateBudgetAsync(userId, budget);
+        var response = ResponseBudget.FromDomain(updatedBudget);
+        return Ok(response);
     }
 
-    [HttpDelete("{userId}/{budgetId}")]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteBudget(Guid budgetId, Guid userId)
-    {
-        try
-        {
-            await _budgetService.DeleteBudgetAsync(budgetId, userId);
-            const string succesfullyMessage = "Bugdet deleted succesfully";
-            return Ok(succesfullyMessage);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+    public async Task<IActionResult> DeleteBudget() // Here add for BudgetId
+    { 
+        var userId = GetAuthenticatedUserId();
+        await _budgetService.DeleteBudgetAsync(userId);
+        const string succesfullyMessage = "Bugdet deleted succesfully";
+        return Ok(succesfullyMessage);
     }
 
 
-    [HttpGet("{userId}/remaining")]
+    [HttpGet("remaining")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetRemainingBudget(Guid userId)
+    public async Task<IActionResult> GetRemainingBudget() // Here add for BudgetId
     {
-        try
-        {
-            var remainingBudget = await _budgetService.GetRemainingBudgetAsync(userId);
-            return Ok(remainingBudget);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var remainingBudget = await _budgetService.GetRemainingBudgetAsync(userId);
+        return Ok(remainingBudget);
     }
 
-    [HttpGet("{userId}/{month}/status")]
+    [HttpGet("{month}/status")]
     [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CheckBudgetStatus(Guid userId, DateTime month)
+    public async Task<IActionResult> CheckBudgetStatus(DateTime month) 
     {
-        try
-        {
-            var status = await _budgetService.CheckBudgetStatusAsync(userId, month);
-            return Ok(status);
-        }
-        catch (Exception e)
-        {
-            return HandleException(e);
-        }
+        var userId = GetAuthenticatedUserId();
+        var status = await _budgetService.CheckBudgetStatusAsync(userId, month);
+        return Ok(status);
     }
 }
