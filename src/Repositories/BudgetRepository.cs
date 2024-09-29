@@ -36,12 +36,25 @@ public class BudgetRepository : IBudgetRepository
         return affectedRows > 0;
     }
 
-    public async Task<Budget?> GetBudgetByUserAsync(Guid userId)
+    public async Task<Budget?> GetSpecificBudgetByUserIdAsync(Guid userId, Guid budgetId)
     {
         const string sql = @"
             SELECT * 
             FROM Budget
-            WHERE UserId = @UserId";
+            WHERE UserId = @UserId AND Id = @Id";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { UserId = userId, Id = budgetId });
+    }
+
+
+    public async Task<Budget?> GetCurrentBudgetAsync(Guid userId)
+    {
+        const string sql = @"
+        SELECT * 
+        FROM Budget
+        WHERE UserId = @UserId
+        AND date_trunc('month', Month) = date_trunc('month', now())";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
         return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { UserId = userId });
@@ -85,7 +98,7 @@ public class BudgetRepository : IBudgetRepository
         return affectedRows > 0;
     }
 
-    public async Task<IEnumerable<Budget>> GetBudgetsByUserAsync(Guid userId)
+    public async Task<IEnumerable<Budget>> GetAllUsersBudgetsAsync(Guid userId)
     {
         const string sql = @"
         SELECT * FROM Budget

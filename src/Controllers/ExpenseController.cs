@@ -43,7 +43,7 @@ public class ExpenseController : ApiControllerBase
     {
         var userId = GetAuthenticatedUserId();
         var category = await _expenseService.GetHighestExpenseUserCategoryAsync(userId);
-        return Ok(category);
+        return Ok($"Highets user spending category: {category}");
     }
 
     [HttpGet("category")]

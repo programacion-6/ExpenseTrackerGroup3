@@ -79,7 +79,7 @@ public class JwtService : IJwtService
                 throw new SecurityTokenException("Invalid token type");
             }
 
-            var email = jwtToken.Claims.First(x => x.Type == JwtRegisteredClaimNames.Sub).Value;
+            var email = jwtToken.Claims.First(x => x.Type == ClaimTypes.Email).Value;
             return email;
         }
         catch
