@@ -6,21 +6,17 @@ using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.Exception;
-using FluentValidation;
+using ExpenseTrackerGroup3.Validators.UserValidator;
 
 namespace ExpenseTrackerGroup3.Services;
 
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
-    private readonly IValidator<UpdateUserDTO> _userValidator;
 
-    public UserService(
-        IUserRepository userRepository,
-        IValidator<UpdateUserDTO> userValidator)
+    public UserService(IUserRepository userRepository)
     {
         _userRepository = userRepository;
-        _userValidator = userValidator;
     }
 
     public async Task<User?> GetUserProfileAsync(Guid userId)
@@ -32,7 +28,8 @@ public class UserService : IUserService
 
     public async Task<User> UpdateUserProfileAsync(Guid userId, UpdateUserDTO user)
     {
-        var validateResult = await _userValidator.ValidateAsync(user);
+        var userValidator = new UserValidator();
+        var validateResult = await userValidator.ValidateAsync(user);
         validateResult.ThrowIfValidationFailed();
 
         var userExists = await _userRepository.GetByIdAsync(userId);

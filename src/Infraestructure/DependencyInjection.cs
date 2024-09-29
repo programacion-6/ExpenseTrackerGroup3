@@ -1,9 +1,7 @@
-using Domain.DTOs;
 using ExpenseTrackerGroup3.Data;
 using ExpenseTrackerGroup3.Data.Concretes;
 using ExpenseTrackerGroup3.Data.Interfaces;
 using ExpenseTrackerGroup3.Middleware;
-using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Repositories;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services;
@@ -16,14 +14,6 @@ using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
 using ExpenseTrackerGroup3.Utils.NotifyMilestone;
 using ExpenseTrackerGroup3.Utils.NotifyMilestone.Interfaces;
 using ExpenseTrackerGroup3.Utils.Swagger;
-using ExpenseTrackerGroup3.Validators.AuthValidator;
-using ExpenseTrackerGroup3.Validators.BudgetValidator;
-using ExpenseTrackerGroup3.Validators.ExpenseValidator;
-using ExpenseTrackerGroup3.Validators.GoalValidator;
-using ExpenseTrackerGroup3.Validators.IncomeValidator;
-using ExpenseTrackerGroup3.Validators.UserValidator;
-
-using FluentValidation;
 
 namespace ExpenseTrackerGroup3.Infraestructure;
 
@@ -37,8 +27,7 @@ public static class DependencyInjection
             .AddSwaggerAuthentication()
             .AddRepositories()
             .AddServices()
-            .AddJwtAuthentication(configuration)
-            .AddValidators();
+            .AddJwtAuthentication(configuration);
         return services;
     }
 
@@ -79,20 +68,6 @@ public static class DependencyInjection
         services.AddScoped<IAuthService, AuthService>();
         services.AddTransient<IEmailSender, EmailSender>();
         services.AddSingleton<SmtpOptions>();
-        return services;
-    }
-
-    private static IServiceCollection AddValidators(this IServiceCollection services)
-    {
-        services.AddScoped<IValidator<LoginRequest>, LoginValidator>();
-        services.AddScoped<IValidator<CreateUser>, RegisterValidator>();
-        services.AddScoped<IValidator<RequestResetPassword>, EmailValidator>();
-        services.AddScoped<IValidator<ResetPassword>, PasswordValidator>();
-        services.AddScoped<IValidator<CreateBudget>, BudgetValidator>();
-        services.AddScoped<IValidator<CreateExpense>, ExpenseValidator>();
-        services.AddScoped<IValidator<CreateGoal>, GoalValidator>();
-        services.AddScoped<IValidator<CreateIncome>, IncomeValidator>();
-        services.AddScoped<IValidator<UpdateUserDTO>, UserValidator>();
         return services;
     }
 }

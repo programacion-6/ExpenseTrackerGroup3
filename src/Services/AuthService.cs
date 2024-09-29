@@ -9,7 +9,8 @@ using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Exception;
 using ExpenseTrackerGroup3.Utils.Hasher.Interfaces;
 using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
-using FluentValidation;
+using ExpenseTrackerGroup3.Validators.AuthValidator;
+
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -19,34 +20,23 @@ public class AuthService : IAuthService
     private readonly IPasswordHasher _passwordHasher;
     private readonly IJwtService _jwtService;
     private readonly IEmailSender _emailSender;
-    private readonly IValidator<LoginRequest> _loginValidator;
-    private readonly IValidator<CreateUser> _createValidator;
-    private readonly IValidator<RequestResetPassword> _requestResetValidator;
-    private readonly IValidator<ResetPassword> _resetValidator;
 
     public AuthService(
         IUserRepository userRepository,
         IPasswordHasher passwordHasher,
         IJwtService jwtService,
-        IEmailSender emailSender,
-        IValidator<LoginRequest> loginValidator,
-        IValidator<CreateUser> createValidator,
-        IValidator<RequestResetPassword> requestResetValidator,
-        IValidator<ResetPassword> resetValidator)
+        IEmailSender emailSender)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
         _jwtService = jwtService;
         _emailSender = emailSender;
-        _loginValidator = loginValidator;
-        _createValidator = createValidator;
-        _requestResetValidator = requestResetValidator;
-        _resetValidator = resetValidator;
     }
 
     public async Task<LoginResponse> LoginUserAsync(string email, string password)
     {
-        var validationResult = await _loginValidator.ValidateAsync( new LoginRequest(email, password) );
+        var loginValidator = new LoginValidator();
+        var validationResult = await loginValidator.ValidateAsync( new LoginRequest(email, password) );
         validationResult.ThrowIfValidationFailed();
 
         var user = await _userRepository.GetByEmailAsync(email);
@@ -64,7 +54,8 @@ public class AuthService : IAuthService
 
     public async Task<User> RegisterUserAsync(CreateUser user)
     {
-        var validationResult = await _createValidator.ValidateAsync(user);
+        var createValidator = new RegisterValidator();
+        var validationResult = await createValidator.ValidateAsync(user);
         validationResult.ThrowIfValidationFailed();
 
         var existingUser = await _userRepository.GetByEmailAsync(user.Email);
@@ -89,7 +80,8 @@ public class AuthService : IAuthService
 
     public async Task RequestResetPasswordAsync(RequestResetPassword request)
     {
-        var validationResult = await _requestResetValidator.ValidateAsync(request);
+        var requestResetValidator = new EmailValidator();
+        var validationResult = await requestResetValidator.ValidateAsync(request);
         validationResult.ThrowIfValidationFailed();
 
         var user = await _userRepository.GetByEmailAsync(request.Email);
@@ -102,7 +94,8 @@ public class AuthService : IAuthService
 
     public async Task ResetPasswordAsync(ResetPassword reset)
     {
-        var validationResult = await _resetValidator.ValidateAsync(reset);
+        var resetPasswordValidator = new PasswordValidator();
+        var validationResult = await resetPasswordValidator.ValidateAsync(reset);
         validationResult.ThrowIfValidationFailed();
 
         var email = _jwtService.ValidateToken(reset.Token, "resetPassword");

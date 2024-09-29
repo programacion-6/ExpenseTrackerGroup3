@@ -6,7 +6,8 @@ using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.Exception;
-using FluentValidation;
+using ExpenseTrackerGroup3.Validators.BudgetValidator;
+
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -15,23 +16,21 @@ public class BudgetService : IBudgetService
     private readonly IBudgetRepository _budgetRepository;
     private readonly IUserRepository _userRepository;
     private readonly IExpenseRepository _expenseRepository;
-    private readonly IValidator<CreateBudget> _budgetValidator;
 
     public BudgetService(
         IBudgetRepository budgetRepository,
         IUserRepository userRepository,
-        IExpenseRepository expenseRepository,
-        IValidator<CreateBudget> budgetValidator)
+        IExpenseRepository expenseRepository)
     {
         _budgetRepository = budgetRepository;
         _userRepository = userRepository;
         _expenseRepository = expenseRepository;
-        _budgetValidator = budgetValidator;
     }
 
     public async Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget)
     {
-        var validationResult = await _budgetValidator.ValidateAsync(budget);
+        var budgetValidator = new BudgetValidator();
+        var validationResult = await budgetValidator.ValidateAsync(budget);
         validationResult.ThrowIfValidationFailed();
 
         var user = await _userRepository.GetByIdAsync(userId);
@@ -116,7 +115,8 @@ public class BudgetService : IBudgetService
 
     public async Task<Budget> UpdateBudgetAsync(Guid userId, CreateBudget budget)
     {
-        var validationResult = await _budgetValidator.ValidateAsync(budget);
+        var budgetValidator = new BudgetValidator();
+        var validationResult = await budgetValidator.ValidateAsync(budget);
         validationResult.ThrowIfValidationFailed();
 
         var existingBudget = await _userRepository.GetByIdAsync(userId);
