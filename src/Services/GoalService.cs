@@ -8,6 +8,7 @@ using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Exception;
 using ExpenseTrackerGroup3.Utils.NotifyMilestone.Interfaces;
+using FluentValidation;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -16,16 +17,25 @@ public class GoalService : IGoalService
     private readonly IGoalRepository _goalRepository;
     private readonly IUserRepository _userRepository;
     private readonly IGoalNotifyService _goalNotifyService;
+    private readonly IValidator<CreateGoal> _goalValidator;
 
-    public GoalService(IGoalRepository goalRepository, IUserRepository userRepository, IGoalNotifyService goalNotifyService)
+    public GoalService(
+        IGoalRepository goalRepository, 
+        IUserRepository userRepository, 
+        IGoalNotifyService goalNotifyService,
+        IValidator<CreateGoal> goalValidator)
     {
         _goalRepository = goalRepository;
         _userRepository = userRepository;
         _goalNotifyService = goalNotifyService;
+        _goalValidator = goalValidator;
     }
 
     public async Task<Goal> CreateGoalAsync(Guid userId, CreateGoal goal)
     {
+        var validationResult = await _goalValidator.ValidateAsync(goal);
+        validationResult.ThrowIfValidationFailed();
+
         var userExists = await _userRepository.GetByIdAsync(userId);
         userExists.ThrowIfNull("User not found");
 

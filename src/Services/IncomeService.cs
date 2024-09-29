@@ -3,6 +3,7 @@ using Domain.Entities;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.Exception;
+using FluentValidation;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -10,15 +11,23 @@ public class IncomeService : IIncomeService
 {
     private readonly IIncomeRepository _incomeRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IValidator<CreateIncome> _incomeValidator;
 
-    public IncomeService(IIncomeRepository incomeRepository, IUserRepository userRepository)
+    public IncomeService(
+        IIncomeRepository incomeRepository,
+        IUserRepository userRepository,
+        IValidator<CreateIncome> incomeValidator)
     {
         _incomeRepository = incomeRepository;
         _userRepository = userRepository;
+        _incomeValidator = incomeValidator;
     }
 
     public async Task<Income> AddIncomeAsync(Guid userId, CreateIncome income)
     {
+        var validationResult = await _incomeValidator.ValidateAsync(income);
+        validationResult.ThrowIfValidationFailed();
+
         var user = await _userRepository.GetByIdAsync(userId);
         user.ThrowIfNull("User not found");
 
@@ -60,11 +69,11 @@ public class IncomeService : IIncomeService
     {
         var existingIncome = await _incomeRepository.GetByIdAsync(incomeId);
         existingIncome.ThrowIfNull("Income not found");
-        
+
         existingIncome = income.ToDomain(existingIncome!);
         var success = await _incomeRepository.UpdateAsync(existingIncome);
         success.ThrowIfOperationFailed("Failed to update income");
 
         return existingIncome;
-    }   
+    }
 }

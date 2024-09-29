@@ -6,6 +6,7 @@ using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Utils.Exception;
 using ExpenseTrackerGroup3.Utils.EmailSender;
+using FluentValidation;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -15,17 +16,27 @@ public class ExpenseService : IExpenseService
     private readonly IUserRepository _userRepository;
     private readonly IBudgetService _budgetService;
     private readonly IEmailSender _emailSender;
+    private readonly IValidator<CreateExpense> _expenseValidator;
 
-    public ExpenseService(IExpenseRepository expenseRepository, IUserRepository userRepository, IBudgetService budgetService, IEmailSender emailSender)
+    public ExpenseService(
+        IExpenseRepository expenseRepository,
+        IUserRepository userRepository,
+        IBudgetService budgetService,
+        IEmailSender emailSender,
+        IValidator<CreateExpense> expenseValidator)
     {
         _expenseRepository = expenseRepository;
         _userRepository = userRepository;
         _budgetService = budgetService;
         _emailSender = emailSender;
+        _expenseValidator = expenseValidator;
     }
 
     public async Task<Expense> AddExpenseAsync(Guid userId, CreateExpense expense)
     {
+        var validationResult = await _expenseValidator.ValidateAsync(expense);
+        validationResult.ThrowIfValidationFailed();
+
         var user = await ValidateUserAsync(userId);
         var remainingBudget = await ValidateBudgetAsync(userId, expense.Amount);
         await NotifyIfThresholdExceededAsync(user, remainingBudget, expense.Amount);
@@ -78,6 +89,9 @@ public class ExpenseService : IExpenseService
 
     public async Task<Expense> UpdateExpenseAsync(Guid userId, Guid expenseId, CreateExpense expense)
     {
+        var validationResult = await _expenseValidator.ValidateAsync(expense);
+        validationResult.ThrowIfValidationFailed();
+
         var user = await _userRepository.GetByIdAsync(userId);
         user.ThrowIfNull("User not found");
 
