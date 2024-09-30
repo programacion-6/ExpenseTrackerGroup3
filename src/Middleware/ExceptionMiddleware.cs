@@ -2,6 +2,7 @@ using System.Net;
 using System.Text.Json;
 
 using ExpenseTrackerGroup3.Exceptions;
+using FluentValidation;
 
 namespace ExpenseTrackerGroup3.Middleware;
 
@@ -42,6 +43,16 @@ public class ExceptionMiddleware
 
         switch (exception)
         {
+             case ValidationException validationException:
+                response.StatusCode = (int)HttpStatusCode.BadRequest;
+                response.Message = "Validation error";
+                response.ErrorCode = "VALIDATION_ERROR";
+                response.Details = validationException.Errors.Select(e => new ValidationError
+                {
+                    PropertyName = e.PropertyName,
+                    ErrorMessage = e.ErrorMessage
+                }).ToList();
+                break;
             case ApiException apiException:
                 response.StatusCode = (int)apiException.StatusCode;
                 response.Message = apiException.Message;

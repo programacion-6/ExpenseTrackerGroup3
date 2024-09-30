@@ -6,4 +6,5 @@ public class ErrorDetails
     public string? Message { get; set; }
     public string? ErrorCode { get; set; }
     public DateTime TimeStamp { get; set; }
+    public List<ValidationError>? Details { get; set; }
 }
