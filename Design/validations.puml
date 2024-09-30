@@ -1,129 +1,112 @@
-@startuml validations
-
-package "validations" {
-    interface IValidation<T> {
-        + void Validate(T item) 
+@startuml
+package "Validators.Rules" {
+    class BudgetRules {
+        + Amount<T>(ruleBuilder: IRuleBuilder<T, decimal>): IRuleBuilderOptions<T, decimal>
+        + AlertThreshold<T>(ruleBuilder: IRuleBuilder<T, decimal>): IRuleBuilderOptions<T, decimal>
     }
 
-    class UserValidation implements IValidation {
-        + void Validate(User item)
-        - void ValidateName(string name)
-        - void ValidateEmail(string email)
-        - void ValidatePasswordHash(string passwordHash)
+    class ExpenseRules {
+        + Description<T>(ruleBuilder: IRuleBuilder<T, string?>): IRuleBuilderOptions<T, string?>
+        + Category<T>(ruleBuilder: IRuleBuilder<T, string>): IRuleBuilderOptions<T, string>
+        + Date<T>(ruleBuilder: IRuleBuilder<T, DateTime>): IRuleBuilderOptions<T, DateTime>
+        + RecurringExpense<T>(ruleBuilder: IRuleBuilder<T, Boolean>): IRuleBuilderOptions<T, Boolean>
     }
 
-    class ExpenseValidation implements IValidation {
-        + void Validate(Expense item)
-        - void ValidateAmount(decimal amount)
-        - void ValidateDescription(string description)
-        - void ValidateCategory(string category)
+    class GoalRules {
+        + DeadLine<T>(ruleBuilder: IRuleBuilder<T, DateTime>): IRuleBuilderOptions<T, DateTime>
+        + CurrentAmount<T>(ruleBuilder: IRuleBuilder<T, decimal>): IRuleBuilderOptions<T, decimal>
     }
 
-    class IncomeValidation implements IValidation {
-        + void Validate(Income item)
-        - void ValidateAmount(decimal amount)
-        - void ValidateSource(string source)
+    class IncomeRules {
+        + Source<T>(ruleBuilder: IRuleBuilder<T, string?>): IRuleBuilderOptions<T, string?>
     }
 
-    class BudgetValidation implements IValidation {
-        + void Validate(Budget item)
-        - void ValidateMonth(DateTime month)
-        - void ValidateBudgetAmount(decimal budgetAmount)
-    }
-
-    class GoalValidation implements IValidation {
-        + void Validate(Goal item)
-        - void ValidateGoalAmount(decimal goalAmount)
-        - void ValidateDeadLine(DateTime deadLine)
-        - void ValidateCurrentAmount(decimal currentAmount)
-    }
-
-    package "exceptions" {
-        class CustomException {
-            + SeverityLevel : SeverityLevel
-            + ResolutionSuggestion : string 
-        }
-
-        CustomException <|-- UserException
-        CustomException <|-- ExpenseException
-        CustomException <|-- IncomeException 
-        CustomException <|-- BudgetException
-        CustomException <|-- GoalException
-
-        enum SeverityLevel {
-            Low
-            Medium
-            High 
-            Critical
-        }
-
-        CustomException --> SeverityLevel : uses
-    }
-
-    package "validation-rules" {
-        class ValidationRule<T> {
-            + T Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class RequiredRule<T> implements ValidationRule<T> {
-            + T Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class MinLengthRule<T> implements ValidationRule<T> {
-            + T Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class MaxLengthRule<T> implements ValidationRule<T> {
-            + T Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class EmailRule implements ValidationRule<string> {
-            + string Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class PasswordRule implements ValidationRule<string> {
-            + string Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class DecimalRule implements ValidationRule<decimal> {
-            + decimal Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class DateRule implements ValidationRule<DateTime> {
-            + DateTime Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        class BooleanRule implements ValidationRule<bool> {
-            + bool Value
-            + string ErrorMessage
-            + bool IsValid
-        }
-
-        ValidationRule <|-- RequiredRule
-        ValidationRule <|-- MinLengthRule
-        ValidationRule <|-- MaxLengthRule
-        ValidationRule <|-- EmailRule
-        ValidationRule <|-- PasswordRule
-        ValidationRule <|-- DecimalRule
-        ValidationRule <|-- DateRule
-        ValidationRule <|-- BooleanRule
+    class UserRules {
+        + Email<T>(ruleBuilder: IRuleBuilder<T, string>): IRuleBuilderOptions<T, string>
+        + Username<T>(ruleBuilder: IRuleBuilder<T, string>): IRuleBuilderOptions<T, string>
+        + Password<T>(ruleBuilder: IRuleBuilder<T, string>): IRuleBuilderOptions<T, string>
     }
 }
+
+package "Validators.BudgetValidator" {
+    class BudgetValidator {
+        + BudgetValidator()
+    }
+
+    class MonthValidator {
+        + MonthValidator()
+    }
+}
+
+package "Validators.ExpenseValidator" {
+    class ExpenseValidator {
+        + ExpenseValidator()
+    }
+
+    class CategoryValidator {
+        + CategoryValidator()
+    }
+}
+
+package "Validators.GoalValidator" {
+    class GoalValidator {
+        + GoalValidator()
+    }
+
+    class AmountValidator {
+        + AmountValidator()
+    }
+}
+
+package "Validators.IncomeValidator" {
+    class IncomeValidator {
+        + IncomeValidator()
+    }
+
+    class MonthValidator {
+        + MonthValidator()
+    }
+    
+    class UpdateValidator {
+	+ UpdateValidator()
+    }
+}
+
+package "Validators.UserValidator" {
+    class UserValidator {
+        + UserValidator()
+    }
+}
+
+package "Validators.AuthValidator" {
+    class EmailValidator {
+        + EmailValidator()
+    }
+
+    class LoginValidator {
+        + LoginValidator()
+    }
+
+    class PasswordValidator {
+        + PasswordValidator()
+    }
+
+    class RegisterValidator {
+        + RegisterValidator()
+    }
+}
+
+Validators.BudgetValidator --> BudgetRules : uses
+
+Validators.ExpenseValidator --> ExpenseRules : uses
+
+Validators.GoalValidator --> GoalRules : uses 
+
+Validators.IncomeValidator --> IncomeRules : uses
+
+Validators.UserValidator --> UserRules : uses 
+
+Validators.AuthValidator --> UserRules : uses
+
 
 @enduml
