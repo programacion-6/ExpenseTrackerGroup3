@@ -1,16 +1,5 @@
 @startuml services
 
-package "utils" {
-    class PasswordHasher {
-        + string HashPassword(string password)
-        + bool VerifyPassword(User user, string password)
-    }
-
-    class JwtTokenGenerator {
-        + string GenerateToken(Guid userId, string email, string tokenType, TimeSpan expiration)
-    }
-}
-
 package "services" {
     interface IUserService {
         + Task<User> UpdateProfile(Guid userId, CreateUser user)
@@ -20,8 +9,8 @@ package "services" {
     class UserService implements IUserService {
         - IUserRepository _userRepository
         - PasswordHasher _passwordHasher
-        - IValidation _validation
-        UserService(IUserRepository userRepository, IValidation validation, PasswordHasher passwordHasher)
+        - ServiceValidation _validation
+        UserService(IUserRepository userRepository, ServiceValidation validation, PasswordHasher passwordHasher)
     }
 
     interface IAuthService {
@@ -40,7 +29,7 @@ package "services" {
 
     interface IExpenseService {
         + Task<Expense> AddExpense (Guid userId, CreateExpense expense)
-        + Task<List<Expense>> GetUserExpenses(Guid userId)
+        + Task<List<Expense>> GetUser Expenses(Guid userId)
         + Task<string> GetHighestSpendingCategory(Guid userId, string category)
         + Task<string> GetMostExpensiveMonth(Guid userId, DateTime month)
         + Task<bool> CheckRecurringExpense(Guid userId)

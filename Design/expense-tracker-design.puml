@@ -1,13 +1,16 @@
 @startuml expense-tracker-design
 
-title Expense tracker - Class diagram
+title Expense tracker - Diagrama de clases
 
-!include domain.puml 
-!include data.puml 
-!include validations.puml 
+!include controllers.puml
+!include services.puml
 !include repositories.puml
-!include services.puml 
-!include controllers.puml 
+!include data.puml
+!include domain.puml
+!include dtos.puml
+!include exception.puml
+!include utils.puml
+!include validators.puml
 
 UserService *-- IValidation
 ExpenseService *-- IValidation

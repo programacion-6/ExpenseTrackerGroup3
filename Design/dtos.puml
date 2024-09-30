@@ -2,18 +2,15 @@
 
 package "DTOs" {
     class ResponseUser {
-        + Id : Guid
         + Name: string
         + Email: string
-        + CreatedAt: DateTime
         + FromDomain(User user): ResponseUser
     }
 
     class CreateUser {
         + Name: string
         + Email: string
-        + PasswordHash: string
-        + CreatedAt: DateTime
+        + Password: string
         + ToDomain(): User
     }
 
@@ -34,6 +31,7 @@ package "DTOs" {
         + Category : string
         + Date: DateTime
         + CreatedAt : DateTime
+        + RecurringExpense: bool
         + ToDomain(): Expense
     }
 
@@ -49,7 +47,6 @@ package "DTOs" {
     class CreateIncome {
         + Amount : decimal
         + Source : string
-        + CreatedAt : DateTime
         + ToDomain(): Income
     }
 
@@ -86,6 +83,63 @@ package "DTOs" {
         + CreatedAt : DateTime
         + ToDomain(): Goal
     }
+
+    class BudgetStatus {
+        + IsOverThreshold: bool
+        + TotalBudget: decimal
+        + TotalExpenses: decimal
+        + AlertThreshold: decimal
+        + Message: string
+    }
+
+    class ResetPassword {
+        + Password: string
+        + Token: string
+        + FromDomain(ResetPassword reset): ResetPassword
+    }
+
+    class LoginRequest {
+        + Email: string
+        + Password: string
+        + FromDomain(LoginRequest login): LoginRequest
+    }
+
+    class LoginResponse {
+        + Email: string
+        + Token: string
+        + FromDomain(LoginResponse login): LoginResponse
+    }
+
+    class RequestResetPassword {
+        + Email: string
+        + FromDomain(RequestResetPassword request): RequestResetPassword
+    }
+
+    class ResponseUserUpdated {
+        + Id: Guid
+        + Name: string
+        + Email: string
+        + FromDomain(User user): ResponseUserUpdated
+    }
+
+    class UpdateIncome {
+        + Amount: decimal?
+        + Source: string?
+        + ToDomain(Income income): Income
+    }
+
+    class UpdateUserDTO {
+        + Name: string
+        + Email: string
+        + ToDomain(User existingUser): User
+    }
+
+    class MonthlySummary {
+        + Month: DateTime
+        + TotalIncome: decimal
+        + TotalExpenses: decimal
+        + RemainingBudget: decimal
+        + FromDomain(MonthlySummary summary): MonthlySummary
 }
 
 @enduml
