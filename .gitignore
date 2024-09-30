@@ -110,13 +110,12 @@ $RECYCLE.BIN/
 # Docker specific
 docker-compose.override.yml
 docker-compose.debug.yml
-docker-compose.*
+
 docker-compose.override.*
 *.dockerignore
 
 # Logs, database, and misc files
 *.log
-*.sql
 *.sqlite
 *.env
 
@@ -125,9 +124,9 @@ docker-compose.override.*
 *.temp
 
 # Docker files
-**/Dockerfile
+
 .dockerignore
-docker-compose.yml
+
 
 # Ignore secrets file
 secrets.json

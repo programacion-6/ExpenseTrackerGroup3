@@ -1,0 +1,24 @@
+@startuml data
+
+package "data" {
+    class DbConnection implements IDisposable {
+        - string connectionString
+        + DbConnection(string connectionString)
+        + IDbConnection CreateConnection()
+        + void Dispose()
+    } 
+
+    class DbInitializer {
+        + Initializer(string connectionString)
+    }
+
+    class MigrationsScripts {
+        + Script_001_CreateTables.sql
+        + Script_002_InsertData.sql
+    }
+
+    DbInitializer --> MigrationsScripts : Executes
+    DbConnection *-- IDbConnection
+}
+
+@enduml

@@ -1,0 +1,91 @@
+@startuml dtos
+
+package "DTOs" {
+    class ResponseUser {
+        + Id : Guid
+        + Name: string
+        + Email: string
+        + CreatedAt: DateTime
+        + FromDomain(User user): ResponseUser
+    }
+
+    class CreateUser {
+        + Name: string
+        + Email: string
+        + PasswordHash: string
+        + CreatedAt: DateTime
+        + ToDomain(): User
+    }
+
+    class ResponseExpense {
+        + Id : Guid
+        + UserId : Guid
+        + Amount : decimal
+        + Description : string
+        + Category : string
+        + Date: DateTime
+        + CreatedAt : DateTime
+        + FromDomain(Expense expense): ResponseExpense
+    }
+
+    class CreateExpense {
+        + Amount : decimal
+        + Description : string
+        + Category : string
+        + Date: DateTime
+        + CreatedAt : DateTime
+        + ToDomain(): Expense
+    }
+
+    class ResponseIncome {
+        + Id : Guid
+        + UserId : Guid
+        + Amount : decimal
+        + Source : string
+        + CreatedAt : DateTime
+        + FromDomain(Income income): ResponseIncome
+    }
+
+    class CreateIncome {
+        + Amount : decimal
+        + Source : string
+        + CreatedAt : DateTime
+        + ToDomain(): Income
+    }
+
+    class ResponseBudget {
+        + Id : Guid
+        + UserId : Guid
+        + Month : DateTime
+        + BudgetAmount : decimal
+        + AlertThreshold : decimal
+        + FromDomain(Budget budget): ResponseBudget
+    }
+
+    class CreateBudget {
+        + Month : DateTime
+        + BudgetAmount : decimal
+        + AlertThreshold : decimal
+        + ToDomain(): Budget
+    }
+
+    class ResponseGoal {
+        + Id : Guid
+        + UserId : Guid
+        + GoalAmount : decimal
+        + DeadLine : DateTime
+        + CurrentAmount : decimal
+        + CreatedAt : DateTime
+        + FromDomain(Goal goal): ResponseGoal
+    }
+
+    class CreateGoal {
+        + GoalAmount : decimal
+        + DeadLine : DateTime
+        + CurrentAmount : decimal
+        + CreatedAt : DateTime
+        + ToDomain(): Goal
+    }
+}
+
+@enduml
