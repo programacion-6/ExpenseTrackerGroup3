@@ -8,4 +8,5 @@ public interface IBudgetRepository : IRepository<Budget>
     Task<Budget?> GetSpecificBudgetByUserIdAsync(Guid userId, Guid budgetId);
     Task<Budget?> GetCurrentBudgetAsync(Guid userId);
     Task<IEnumerable<Budget>> GetAllUsersBudgetsAsync(Guid userId);
+    Task<Budget?> GetBudgetForMonthAsync(Guid userId, DateTime date);
 }
