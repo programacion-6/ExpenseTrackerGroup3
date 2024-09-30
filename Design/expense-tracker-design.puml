@@ -8,6 +8,7 @@ title Expense tracker - Class diagram
 !include repositories.puml
 !include services.puml 
 !include controllers.puml 
+!include utils.puml
 
 UserService *-- IValidation
 ExpenseService *-- IValidation

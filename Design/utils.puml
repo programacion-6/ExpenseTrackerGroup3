@@ -1,0 +1,84 @@
+@startuml utils
+
+package "utils" {
+    class PasswordHasher {
+        + string HashPassword(string password)
+        + bool VerifyPassword(User user, string password)
+    }
+
+    class JwtTokenGenerator {
+        + string GenerateToken(Guid userId, string email, string tokenType, TimeSpan expiration)
+    }
+
+    class EmailSender {
+        + Task SendEmail(string to, string subject, string body)
+    }
+
+    class ValidatorExtensions {
+        + T ThrowIfNull<T>(this T? obj, string message)
+        + void ThrowIfOperationFailed(this bool success, string message)
+        + void ThrowIfEmpty<T>(this IEnumerable<T> collection, string message)
+        + void ThrowIfExists<T>(this T? obj, string message)
+        + void ThrowIfExists<T>(this IEnumerable<T> collection, string message)
+        + void ThrowIfValidationFailed(this ValidationResult validateResult)
+    }
+
+    class SmtpOptions {
+        + string? Host { get; set; }
+        + int Port { get; set; }
+        + string? Username { get; set; }
+        + string? Password { get; set; }
+        + string? FromEmail { get; set; }
+        + bool EnableSsl { get; set; }
+    }
+
+    class JwtOptions {
+        + string? JwtCode { get; set; }
+    }
+
+    class IPasswordHasher {
+        + string HashPassword(string password)
+        + bool VerifyPassword(string userPassword, string password)
+    }
+
+    class PasswordHasher implements IPasswordHasher {
+        + string HashPassword(string password)
+        + bool VerifyPassword(string userPassword, string password)
+    }
+
+    class IJwtService {
+        + string GenerateToken(Guid userId, string email, string tokenType, TimeSpan tokenExpiration)
+        + string ValidateToken(string token, string expectedTokenType)
+    }
+
+    class JwtService implements IJwtService {
+        + string GenerateToken(Guid userId, string email, string tokenType, TimeSpan tokenExpiration)
+        + string ValidateToken(string token, string expectedTokenType)
+    }
+
+    class IGoalNotificationStrategy {
+        + bool ShouldNotify(decimal goalProgress, DateTime deadline)
+        + string GetSubject()
+        + string GetBody(string userName)
+    }
+
+    class GoalNotificationStrategy implements IGoalNotificationStrategy {
+        + bool ShouldNotify(decimal goalProgress, DateTime deadline)
+        + string GetSubject()
+        + string GetBody(string userName)
+    }
+
+    class IGoalNotifyService {
+        + Task NotifyUserOnMilestoneAsync(User user, decimal goalProgress, Goal goal)
+    }
+
+    class GoalNotifyService implements IGoalNotifyService {
+        + Task NotifyUserOnMilestoneAsync(User user, decimal goalProgress, Goal goal)
+    }
+
+    class SwaggerConfiguration {
+        + IServiceCollection AddSwaggerAuthentication(this IServiceCollection services)
+    }
+}
+
+@enduml

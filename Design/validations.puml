@@ -59,7 +59,71 @@ package "validations" {
 
         CustomException --> SeverityLevel : uses
     }
-}
 
+    package "validation-rules" {
+        class ValidationRule<T> {
+            + T Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class RequiredRule<T> implements ValidationRule<T> {
+            + T Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class MinLengthRule<T> implements ValidationRule<T> {
+            + T Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class MaxLengthRule<T> implements ValidationRule<T> {
+            + T Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class EmailRule implements ValidationRule<string> {
+            + string Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class PasswordRule implements ValidationRule<string> {
+            + string Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class DecimalRule implements ValidationRule<decimal> {
+            + decimal Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class DateRule implements ValidationRule<DateTime> {
+            + DateTime Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        class BooleanRule implements ValidationRule<bool> {
+            + bool Value
+            + string ErrorMessage
+            + bool IsValid
+        }
+
+        ValidationRule <|-- RequiredRule
+        ValidationRule <|-- MinLengthRule
+        ValidationRule <|-- MaxLengthRule
+        ValidationRule <|-- EmailRule
+        ValidationRule <|-- PasswordRule
+        ValidationRule <|-- DecimalRule
+        ValidationRule <|-- DateRule
+        ValidationRule <|-- BooleanRule
+    }
+}
 
 @enduml

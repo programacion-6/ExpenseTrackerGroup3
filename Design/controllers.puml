@@ -1,68 +1,73 @@
 @startuml controllers
 
 package "controllers" {
-    abstract class BaseController extends ControllerBase {
-        # ActionResult HandleException(Exception ex)
-    }
-
-    class UserController extends BaseController {
+    class UserController {
         - IUserService _userService
         + UserController(IUserService userService)
-        + Task<ActionResult> GetProfile(Guid userId)
-        + Task<ActionResult> UpdateProfile(Guid userId, CreateUser user)
+        + Task<IActionResult> UpdateProfile(Guid userId, CreateUser user)
+        + Task<IActionResult> GetUserProfile(Guid userId)
     }
 
-    class AuthController extends BaseController {
-        - IAuthService _authService
-        + AuthController(IAuthService authService)
-        + Task<ActionResult> RegisterUser(CreateUser user)
-        + Task<ActionResult> LoginUser(string email, string password)
-        + Task<ActionResult> RequestPasswordReset(string email)
-        + Task<ActionResult> PasswordReset(string token, string newPassword)
+    class ExpenseController {
+        - IExpenseService _expenseService
+        + ExpenseController(IExpenseService expenseService)
+        + Task<IActionResult> AddExpense (Guid userId, CreateExpense expense)
+        + Task<IActionResult> GetUserExpenses(Guid userId)
+        + Task<IActionResult> GetHighestSpendingCategory(Guid userId, string category)
+        + Task<IActionResult> GetMostExpensiveMonth(Guid userId, DateTime month)
+        + Task<IActionResult> CheckRecurringExpense(Guid userId)
+        + Task<IActionResult> UpdateExpense(Guid expenseId, CreateExpense expense)
+        + Task<IActionResult> DeleteExpense(Guid expenseId)
     }
 
-    class IncomeController extends BaseController {
+    class IncomeController {
         - IIncomeService _incomeService
         + IncomeController(IIncomeService incomeService)
-        + Task<ActionResult> AddIncome(Guid userId, CreateIncome income)
-        + Task<ActionResult> GetUserIncomeById(Guid userId)
-        + Task<ActionResult> GetMonthlyIncome(Guid userId, DateTime month)
-        + Task<ActionResult> UpdateIncome(Guid userId, CreateIncome income)
-        + Task<ActionResult> DeleteIncome(Guid incomeId)
+        + Task<IActionResult> AddIncome(Guid userId, CreateIncome income)
+        + Task<IActionResult> GetUserIncomes(Guid userId)
+        + Task<IActionResult> GetMonthlyIncome(Guid userId, DateTime month)
+        + Task<IActionResult> UpdateIncome(Guid incomeId, CreateIncome income)
+        + Task<IActionResult> DeleteIncome(Guid incomeId)
+        + Task<IActionResult> GetIncomeById(Guid incomeId)
     }
 
-    class ExpenseController extends BaseController {
-        - IExpenseService expenseService
-        + ExpenseController(IExpenseService expenseService)
-        + Task<ActionResult> AddExpense(Guid userId, CreateExpense expense)
-        + Task<ActionResult> GetUserExpenses(Guid userId, DateTime month, string category)
-        + Task<ActionResult> GetUserExpensesById(Guid userId)
-        + Task<ActionResult> UpdateExpense(Guid userId, CreateExpense expense)
-        + Task<ActionResult> DeleteExpense(Guid expenseId)
-        + Task<ActionResult> GetHighestExpenseCategory(Guid userId, string category)
-        + Task<ActionResult> GetMostExpensiveMonth(Guid userId, DateTime month)
-        + Task<ActionResult> CheckRecurringExpense(Guid userId)
-        + Task<ActionResult> GetExpenseById(Guid expenseId)
-    }
-
-    class BudgetController extends BaseController {
-        - IBudgetService budgetService
+    class BudgetController {
+        - IBudgetService _budgetService
         + BudgetController(IBudgetService budgetService)
-        + Task<ActionResult> AddBudget(Guid userId, CreateBudget budget)
-        + Task<ActionResult> UpdateBudget(Guid userId, CreateBudget budget)
-        + Task<ActionResult> GetMonthlyBudget(Guid id, DateTime month)
-        + Task<ActionResult> GetBudgetRemaining(Guid userId)
+        + Task<IActionResult> AddBudget(Guid userId, CreateBudget budget)
+        + Task<IActionResult> GetBudgetUserByMonth(Guid userId, DateTime month)
+        + Task<IActionResult> UpdateBudget(Guid budgetId, CreateBudget budget)
+        + Task<IActionResult> DeleteBudget(Guid budgetId)
+        + Task<IActionResult> CheckBudgetStatus(Guid userId, DateTime month)
     }
 
-    class GoalController extends BaseController {
-        - IGoalService goalService
+    class GoalController {
+        - IGoalService _goalService
         + GoalController(IGoalService goalService)
-        + Task<ActionResult> AddGoal(Guid userId, CreateGoal goal)
-        + Task<ActionResult> UpdateGoal(Guid userId, CreateGoal goal)
-        + Task<ActionResult> GetActiveGoals(Guid userId)
-        + Task<ActionResult> GetGoalProgress(Guid goalId)
-        + Task<ActionResult> UpdateGoalProgress(Guid goalId, decimal amount)
+        + Task<IActionResult> CreateGoal(Guid userId, CreateGoal goal)
+        + Task<IActionResult> GetGoals(Guid userId)
+        + Task<IActionResult> GetActiveGoals(Guid userId)
+        + Task<IActionResult> GetGoalById(Guid goalId)
+        + Task<IActionResult> TrackGoalProgress(Guid userId, Guid goalId, decimal amount)
+        + Task<IActionResult> UpdateGoal(Guid goalId, CreateGoal goal)
+        + Task<IActionResult> DeleteGoal(Guid goalId)
     }
+
+    class AuthController {
+        - IAuthService _ authService
+        + AuthController(IAuthService authService)
+        + Task<IActionResult> RegisterUser(CreateUser user)
+        + Task<IActionResult> LoginUser(string email, string password)
+        + Task<IActionResult> RequestPasswordReset(string email)
+        + Task<IActionResult> ResetPassword(string token, string newPassword)
+    }
+
+    UserController --> IUserService
+    ExpenseController --> IExpenseService
+    IncomeController --> IIncomeService
+    BudgetController --> IBudgetService
+    GoalController --> IGoalService
+    AuthController --> IAuthService
 }
 
 @enduml
