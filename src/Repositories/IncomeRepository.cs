@@ -69,6 +69,11 @@ public class IncomeRepository : IIncomeRepository
         return await connection.QueryAsync<Income>(sql, new { UserId = userId, Year = year, Month = month });
     }
 
+    public async Task<IEnumerable<Income>> GetMonthlyIncomeByUserId(Guid userId, DateTime date)
+    {
+        return await GetMonthlyIncomeByUserId(userId, date.Year, date.Month);
+    }
+
     public async Task<bool> UpdateAsync(Income item)
     {
         const string sql = @"
@@ -82,5 +87,4 @@ public class IncomeRepository : IIncomeRepository
         var affectedRows = await connection.ExecuteAsync(sql, item);
         return affectedRows > 0;
     }
-
 }
