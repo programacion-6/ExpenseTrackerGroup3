@@ -5,6 +5,7 @@ public record MonthlySummaryDTO
     DateTime Date,
     decimal TotalIncome,
     decimal TotalExpense,
+    decimal TotalBudget,
     decimal RemainingBudget
 )
 {
@@ -15,6 +16,7 @@ public record MonthlySummaryDTO
             monthlySummary.Date,
             monthlySummary.TotalIncome,
             monthlySummary.TotalExpense,
+            monthlySummary.TotalBudget,
             monthlySummary.RemainingBudget
         );
     }

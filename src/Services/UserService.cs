@@ -103,10 +103,11 @@ public class UserService : IUserService
         decimal totalIncome = incomes.Sum(income => income.Amount);
         decimal totalExpense = expenses.Sum(expense => expense.Amount);
         decimal totalBudget = budget?.BudgetAmount ?? 0;
+        decimal remainingBudget = totalBudget - totalExpense;
 
         if (totalIncome > 0 || totalExpense > 0 || totalBudget > 0)
         {
-            return new MonthlySummaryDTO(date, totalIncome, totalExpense, totalBudget);
+            return new MonthlySummaryDTO(date, totalIncome, totalExpense, totalBudget, remainingBudget);
         }
 
         return null;

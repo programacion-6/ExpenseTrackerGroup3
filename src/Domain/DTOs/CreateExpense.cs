@@ -8,7 +8,6 @@ public record CreateExpense
   string Description,
   string Category,
   DateTime Date,
-  DateTime CreatedAt,
   bool RecurringExpense
 )
 {
@@ -20,7 +19,7 @@ public record CreateExpense
       Description = Description,
       Category = Category,
       Date = Date,
-      CreatedAt = CreatedAt,
+      CreatedAt = DateTime.Now,
       RecurringExpense = RecurringExpense
     };
   }

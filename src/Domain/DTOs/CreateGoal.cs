@@ -6,8 +6,7 @@ public record CreateGoal
 (
   decimal GoalAmount,
   DateTime DeadLine,
-  decimal CurrentAmount,
-  DateTime CreatedAt
+  decimal CurrentAmount
 )
 {
   public Goal ToDomain()
@@ -17,7 +16,7 @@ public record CreateGoal
       GoalAmount = GoalAmount,
       DeadLine = DeadLine,
       CurrentAmount = CurrentAmount,
-      CreatedAt = CreatedAt
+      CreatedAt = DateTime.Now
     };
   }
 }
