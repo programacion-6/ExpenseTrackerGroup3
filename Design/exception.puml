@@ -1,0 +1,31 @@
+@startuml exception
+package "Exceptions" {
+  abstract class ApiException {
+    - StatusCode: HttpStatusCode
+    - ErrorCode: string
+    - TimeStamp: DateTime
+  }
+
+  class BadRequestException extends ApiException {
+  }
+
+  class InternalServerErrorException extends ApiException {
+  }
+
+  class NotFoundException extends ApiException {
+  }
+
+  class ErrorDetails {
+    - StatusCode: int
+    - Message: string
+    - ErrorCode: string
+    - TimeStamp: DateTime
+    - Details: List<ValidationError>
+  }
+
+  class ValidationError {
+    - PropertyName: string
+    - ErrorMessage: string
+  }
+}
+@enduml
