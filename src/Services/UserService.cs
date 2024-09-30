@@ -47,17 +47,17 @@ public class UserService : IUserService
     {
         if (userId == Guid.Empty)
         {
-            throw new ArgumentException("El ID de usuario no puede ser vacío", nameof(userId));
+            throw new ArgumentException("User ID cannot be empty", nameof(userId));
         }
 
         if (startDate.Year >= endDate.Year)
         {
-            throw new ArgumentException("El año de inicio debe ser menor al año de fin", nameof(startDate));
+            throw new ArgumentException("The initial year must be less than the final year.", nameof(startDate));
         }
 
         if (startDate.Month >= endDate.Month)
         {
-            throw new ArgumentException("El mes de inicio debe ser menor al mes de fin", nameof(startDate));
+            throw new ArgumentException("The initial month must be less than the final month.", nameof(startDate));
         }
 
         try
@@ -87,11 +87,9 @@ public class UserService : IUserService
 
             return monthlySummaries;
         }
-        catch (Exception ex)
+        catch (Exception)
         {
-            throw new Exception("Error al obtener el resumen mensual", ex);
+            throw new BadRequestException("Error when obtaining the monthly summary");
         }
     }
-
-
 }
