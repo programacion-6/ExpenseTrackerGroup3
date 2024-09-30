@@ -68,7 +68,10 @@ public class UserService : IUserService
             for (var month = startMonth; month <= endMonth; month++)
             {
                 var summary = await GetMonthlySummary(userId, year, month);
-                monthlySummaries.Add(summary);
+                if (summary != null)
+                {
+                    monthlySummaries.Add(summary);
+                }
             }
         }
 
@@ -79,7 +82,7 @@ public class UserService : IUserService
 
     private void ValidateDateRange(DateTime startDate, DateTime endDate)
     {
-        if (startDate.Year >= endDate.Year)
+        if (startDate.Year > endDate.Year)
         {
             throw new BadRequestException("The initial year must be less than the final year.");
         }
@@ -90,7 +93,7 @@ public class UserService : IUserService
         }
     }
 
-    private async Task<MonthlySummaryDTO> GetMonthlySummary(Guid userId, int year, int month)
+    private async Task<MonthlySummaryDTO?> GetMonthlySummary(Guid userId, int year, int month)
     {
         var date = new DateTime(year, month, 1);
         var incomes = await _incomeRepository.GetMonthlyIncomeByUserId(userId, date);
@@ -101,6 +104,11 @@ public class UserService : IUserService
         decimal totalExpense = expenses.Sum(expense => expense.Amount);
         decimal totalBudget = budget?.BudgetAmount ?? 0;
 
-        return new MonthlySummaryDTO(date, totalIncome, totalExpense, totalBudget);
+        if (totalIncome > 0 || totalExpense > 0 || totalBudget > 0)
+        {
+            return new MonthlySummaryDTO(date, totalIncome, totalExpense, totalBudget);
+        }
+
+        return null;
     }
 }

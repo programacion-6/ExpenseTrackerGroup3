@@ -58,12 +58,14 @@ public class ExceptionMiddleware
                 response.Message = apiException.Message;
                 response.ErrorCode = apiException.ErrorCode;
                 response.TimeStamp = apiException.TimeStamp;
+                response.Details = [];
                 break;
             default:
                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
                 response.Message = "An unexpected error occurred.";
                 response.ErrorCode = "UNEXPECTED_ERROR";
                 response.TimeStamp = DateTime.Now;
+                response.Details = [];
                 break;
         }
 
