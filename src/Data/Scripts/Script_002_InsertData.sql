@@ -2,27 +2,27 @@ CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 INSERT INTO users (id, name, email, passwordHash, createdAt) 
 VALUES
-('4a3a8e37-bd77-4266-aaee-de276f6b85e0', 'John Doe', 'john.doe@example.com', crypt('hash1', gen_salt('bf')), '2023-09-01'),
-('0c3c5fef-b022-45af-b1d2-2d9792dfcec8', 'Jane Smith', 'jane.smith@example.com', crypt('hash2', gen_salt('bf')), '2023-09-02'),
-('a5be0528-182b-4794-ae53-ec6b2b1fdb94', 'Mike Johnson', 'mike.johnson@example.com', crypt('hash3', gen_salt('bf')), '2023-09-03'),
-('bcec534b-ee13-4048-9298-82bbeae07aeb', 'Alice Brown', 'alice.brown@example.com', crypt('hash4', gen_salt('bf')), '2023-09-04'),
-('6c6ae333-0665-4df3-b95a-bcb8b3d50a35', 'Bob White', 'bob.white@example.com', crypt('hash5', gen_salt('bf')), '2023-09-05'),
-('7e9d4c13-64fc-472c-9389-6bbb7dab80ee', 'Emma Davis', 'emma.davis@example.com', crypt('hash6', gen_salt('bf')), '2023-09-06'),
-('344f5819-7820-4a84-a451-058b5489d4d8', 'Chris Taylor', 'chris.taylor@example.com', crypt('hash7', gen_salt('bf')), '2023-09-07'),
-('a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', 'Sophia Miller', 'sophia.miller@example.com', crypt('hash8', gen_salt('bf')), '2023-09-08'),
-('27e1afb8-3212-407e-8792-0717b535b0e7', 'Liam Wilson', 'liam.wilson@example.com', crypt('hash9', gen_salt('bf')), '2023-09-09'),
-('11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', 'Olivia Martinez', 'olivia.martinez@example.com', crypt('hash10', gen_salt('bf')), '2023-09-10')
+('4a3a8e37-bd77-4266-aaee-de276f6b85e0', 'John Doe', 'john.doe@example.com', crypt('Pass@word1', gen_salt('bf')), '2023-09-01'),
+('0c3c5fef-b022-45af-b1d2-2d9792dfcec8', 'Jane Smith', 'jane.smith@example.com', crypt('Secure@123', gen_salt('bf')), '2023-09-02'),
+('a5be0528-182b-4794-ae53-ec6b2b1fdb94', 'Mike Johnson', 'mike.johnson@example.com', crypt('Strong#Pass3', gen_salt('bf')), '2023-09-03'),
+('bcec534b-ee13-4048-9298-82bbeae07aeb', 'Alice Brown', 'alice.brown@example.com', crypt('Complex@4567', gen_salt('bf')), '2023-09-04'),
+('6c6ae333-0665-4df3-b95a-bcb8b3d50a35', 'Bob White', 'bob.white@example.com', crypt('Secure$Pass5', gen_salt('bf')), '2023-09-05'),
+('7e9d4c13-64fc-472c-9389-6bbb7dab80ee', 'Emma Davis', 'emma.davis@example.com', crypt('EmmaP@ss6', gen_salt('bf')), '2023-09-06'),
+('344f5819-7820-4a84-a451-058b5489d4d8', 'Chris Taylor', 'chris.taylor@example.com', crypt('TaylorC#7', gen_salt('bf')), '2023-09-07'),
+('a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', 'Sophia Miller', 'sophia.miller@example.com', crypt('SophiaM$8', gen_salt('bf')), '2023-09-08'),
+('27e1afb8-3212-407e-8792-0717b535b0e7', 'Liam Wilson', 'liam.wilson@example.com', crypt('WilsonL@9', gen_salt('bf')), '2023-09-09'),
+('11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', 'Olivia Martinez', 'olivia.martinez@example.com', crypt('OliviaM#10', gen_salt('bf')), '2023-09-10')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO Expense (id, userId, amount, description, category, date, createdAt, recurringExpense) 
 VALUES
 ('2dc8e76d-8e6c-435e-aec4-277f62b688f5', '4a3a8e37-bd77-4266-aaee-de276f6b85e0', 100.00, 'Groceries', 'Food', '2023-09-01', '2023-09-01', false),
 ('9d35430f-9d90-4f12-a832-c01f0501d959', '0c3c5fef-b022-45af-b1d2-2d9792dfcec8', 50.00, 'Gas', 'Transport', '2023-09-02', '2023-09-02', false),
-('e3673e87-d73c-45f5-a735-7814bde88dad', 'a5be0528-182b-4794-ae53-ec6b2b1fdb94', 120.50, 'Rent', 'Housing', '2023-09-03', '2023-09-03', true),
+('e3673e87-d73c-45f5-a735-7814bde88dad', 'a5be0528-182b-4794-ae53-ec6b2b1fdb94', 1200.50, 'Rent', 'Housing', '2023-09-03', '2023-09-03', true),
 ('ffcab1f2-c7ad-4a11-8a68-5b8f067d6fc5', 'bcec534b-ee13-4048-9298-82bbeae07aeb', 75.00, 'Dining Out', 'Food', '2023-09-04', '2023-09-04', false),
 ('09855b68-f1aa-42c0-9255-18f4610ecb52', '6c6ae333-0665-4df3-b95a-bcb8b3d50a35', 30.00, 'Electricity', 'Utilities', '2023-09-05', '2023-09-05', true),
 ('f629f101-fe29-4387-b5e3-c762b675563d', '7e9d4c13-64fc-472c-9389-6bbb7dab80ee', 20.00, 'Internet', 'Utilities', '2023-09-06', '2023-09-06', true),
-('ff52448a-2d53-4635-8725-683a1ebb88d2', '344f5819-7820-4a84-a451-058b5489d4d8', 15.00, 'Coffee', 'Entertainment', '2023-09-07', '2023-09-07', false),
+('ff52448a-2d53-4635-8725-683a1ebb88d2', '344f5819-7820-4a84-a451-058b5489d4d8', 15.00, 'Coffee', 'Food', '2023-09-07', '2023-09-07', false),
 ('828c64be-b063-4ea9-9810-0ae51e187ffd', 'a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', 200.00, 'Car Payment', 'Transport', '2023-09-08', '2023-09-08', true),
 ('6cee7987-8c6d-4e03-8db9-1ad48a716cc5', '27e1afb8-3212-407e-8792-0717b535b0e7', 90.00, 'Clothing', 'Shopping', '2023-09-09', '2023-09-09', false),
 ('78add9fe-4efe-4362-a2f0-bee368281106', '11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', 150.00, 'Gym Membership', 'Health', '2023-09-10', '2023-09-10', true)
@@ -44,16 +44,16 @@ ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO Budget (id, userId, month, budgetAmount, alertThreshold) 
 VALUES
-('2d2ec04c-2b63-41bb-8dcc-6158e6fa758a', '4a3a8e37-bd77-4266-aaee-de276f6b85e0', '2023-09-01', 2500.00, 200.00),
-('94df030d-a863-46cb-874b-280851bc6283', '0c3c5fef-b022-45af-b1d2-2d9792dfcec8', '2023-09-01', 1500.00, 100.00),
-('a7613046-b220-4e5d-8f34-7d62e808bf4d', 'a5be0528-182b-4794-ae53-ec6b2b1fdb94', '2023-09-01', 3000.00, 250.00),
-('1d502f48-ac00-498a-a47d-5e8099d19833', 'bcec534b-ee13-4048-9298-82bbeae07aeb', '2023-09-01', 1800.00, 150.00),
-('a10bcd66-b660-4c54-aeee-c176d339a9f4', '6c6ae333-0665-4df3-b95a-bcb8b3d50a35', '2023-09-01', 2200.00, 300.00),
-('b032d658-8880-46e8-894b-0e928f08b097', '7e9d4c13-64fc-472c-9389-6bbb7dab80ee', '2023-09-01', 1000.00, 50.00),
-('fecde3aa-0592-40e7-9539-72855603efe8', '344f5819-7820-4a84-a451-058b5489d4d8', '2023-09-01', 3500.00, 400.00),
-('26a7ceed-9d23-4170-b1a4-5ff15e5f4728', 'a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', '2023-09-01', 1750.00, 100.00),
-('f084cdad-e31c-4c62-b374-15b939908df5', '27e1afb8-3212-407e-8792-0717b535b0e7', '2023-09-01', 2700.00, 300.00),
-('2f4c7ed2-70d3-453c-a87d-49e552ee2947', '11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', '2023-09-01', 2000.00, 150.00)
+('2d2ec04c-2b63-41bb-8dcc-6158e6fa758a', '4a3a8e37-bd77-4266-aaee-de276f6b85e0', '2023-09-01', 2500.00, 10.00),
+('94df030d-a863-46cb-874b-280851bc6283', '0c3c5fef-b022-45af-b1d2-2d9792dfcec8', '2023-09-01', 1500.00, 15.00),
+('a7613046-b220-4e5d-8f34-7d62e808bf4d', 'a5be0528-182b-4794-ae53-ec6b2b1fdb94', '2023-09-01', 3000.00, 20.00),
+('1d502f48-ac00-498a-a47d-5e8099d19833', 'bcec534b-ee13-4048-9298-82bbeae07aeb', '2023-09-01', 1800.00, 25.00),
+('a10bcd66-b660-4c54-aeee-c176d339a9f4', '6c6ae333-0665-4df3-b95a-bcb8b3d50a35', '2023-09-01', 2200.00, 30.00),
+('b032d658-8880-46e8-894b-0e928f08b097', '7e9d4c13-64fc-472c-9389-6bbb7dab80ee', '2023-09-01', 1000.00, 35.00),
+('fecde3aa-0592-40e7-9539-72855603efe8', '344f5819-7820-4a84-a451-058b5489d4d8', '2023-09-01', 3500.00, 40.00),
+('26a7ceed-9d23-4170-b1a4-5ff15e5f4728', 'a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', '2023-09-01', 1750.00, 45.00),
+('f084cdad-e31c-4c62-b374-15b939908df5', '27e1afb8-3212-407e-8792-0717b535b0e7', '2023-09-01', 2700.00, 50.00),
+('2f4c7ed2-70d3-453c-a87d-49e552ee2947', '11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', '2023-09-01', 2000.00, 55.00)
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO Goal (id, userId, goalAmount, deadLine, currentAmount, createdAt) 

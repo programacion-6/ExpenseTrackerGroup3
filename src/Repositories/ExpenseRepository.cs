@@ -138,8 +138,8 @@ public class ExpenseRepository : IExpenseRepository
         const string sql = @"
         SELECT * FROM Expense
         WHERE UserId = @UserId
-        AND EXTRACT(YEAR FROM CreatedAt) = @Year
-        AND EXTRACT(MONTH FROM CreatedAt) = @Month";
+        AND EXTRACT(YEAR FROM Date) = @Year
+        AND EXTRACT(MONTH FROM Date) = @Month";
 
         using var connection = await _dbConnection.CreateConnectionAsync();
         

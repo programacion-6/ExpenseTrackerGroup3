@@ -145,7 +145,6 @@ public class GoalService : IGoalService
         existingGoal.GoalAmount = goal.GoalAmount;
         existingGoal.DeadLine = goal.DeadLine;
         existingGoal.CurrentAmount = goal.CurrentAmount;
-        existingGoal.CreatedAt = goal.CreatedAt;
 
         var success = await _goalRepository.UpdateAsync(existingGoal);
         success.ThrowIfOperationFailed("Failed to update goal");
