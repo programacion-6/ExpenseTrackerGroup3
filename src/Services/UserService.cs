@@ -41,8 +41,11 @@ public class UserService : IUserService
         var userExists = await _userRepository.GetByIdAsync(userId);
         userExists.ThrowIfNull("User not found");
 
+        var emailExists = await _userRepository.GetByEmailAsync(user.Email);
+        emailExists.ThrowIfExists("Email already exists");
+
         var updatedUser = user.ToDomain(userExists!);
-        var success = await  _userRepository.UpdateAsync(updatedUser);
+        var success = await _userRepository.UpdateAsync(updatedUser);
         success.ThrowIfOperationFailed("Failed to update user");
 
         return updatedUser;
@@ -50,51 +53,54 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<MonthlySummaryDTO>> GetMonthlySummaryAsync(Guid userId, DateTime startDate, DateTime endDate)
     {
-        if (userId == Guid.Empty)
+        var user = await _userRepository.GetByIdAsync(userId);
+        user.ThrowIfNull("User not found");
+
+        ValidateDateRange(startDate, endDate);
+
+        var monthlySummaries = new List<MonthlySummaryDTO>();
+
+        for (var year = startDate.Year; year <= endDate.Year; year++)
         {
-            throw new ArgumentException("User ID cannot be empty", nameof(userId));
+            var startMonth = year == startDate.Year ? startDate.Month : 1;
+            var endMonth = year == endDate.Year ? endDate.Month : 12;
+
+            for (var month = startMonth; month <= endMonth; month++)
+            {
+                var summary = await GetMonthlySummary(userId, year, month);
+                monthlySummaries.Add(summary);
+            }
         }
 
+        monthlySummaries.ThrowIfEmpty("No monthly summaries found for the specified date range");
+
+        return monthlySummaries;
+    }
+
+    private void ValidateDateRange(DateTime startDate, DateTime endDate)
+    {
         if (startDate.Year >= endDate.Year)
         {
-            throw new ArgumentException("The initial year must be less than the final year.", nameof(startDate));
+            throw new BadRequestException("The initial year must be less than the final year.");
         }
 
-        if (startDate.Month >= endDate.Month)
+        if (startDate.Year == endDate.Year && startDate.Month >= endDate.Month)
         {
-            throw new ArgumentException("The initial month must be less than the final month.", nameof(startDate));
+            throw new BadRequestException("When years are the same, the initial month must be less than the final month.");
         }
+    }
 
-        try
-        {
-            var monthlySummaries = new List<MonthlySummaryDTO>();
+    private async Task<MonthlySummaryDTO> GetMonthlySummary(Guid userId, int year, int month)
+    {
+        var date = new DateTime(year, month, 1);
+        var incomes = await _incomeRepository.GetMonthlyIncomeByUserId(userId, date);
+        var expenses = await _expenseRepository.GetMonthlyExpenseByUserId(userId, date);
+        var budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, date);
 
-            for (var year = startDate.Year; year <= endDate.Year; year++)
-            {
-                var startMonth = year == startDate.Year ? startDate.Month : 1;
-                var endMonth = year == endDate.Year ? endDate.Month : 12;
+        decimal totalIncome = incomes.Sum(income => income.Amount);
+        decimal totalExpense = expenses.Sum(expense => expense.Amount);
+        decimal totalBudget = budget?.BudgetAmount ?? 0;
 
-                for (var month = startMonth; month <= endMonth; month++)
-                {
-                    IEnumerable<Income> incomes = await _incomeRepository.GetMonthlyIncomeByUserId(userId, new DateTime(year, month, 1));
-                    IEnumerable<Expense> expenses = await _expenseRepository.GetMonthlyExpenseByUserId(userId, new DateTime(year, month, 1));
-                    Budget? budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, new DateTime(year, month, 1));
-
-                    decimal totalIncome = incomes.Sum(income => income.Amount);
-                    decimal totalExpense = expenses.Sum(expense => expense.Amount);
-                    decimal totalBudget = budget?.BudgetAmount ?? 0;
-
-                    MonthlySummaryDTO summary = new(new DateTime(year, month, 1), totalIncome, totalExpense, totalBudget);
-
-                    monthlySummaries.Add(summary);
-                }
-            }
-
-            return monthlySummaries;
-        }
-        catch (Exception)
-        {
-            throw new BadRequestException("Error when obtaining the monthly summary");
-        }
+        return new MonthlySummaryDTO(date, totalIncome, totalExpense, totalBudget);
     }
 }
