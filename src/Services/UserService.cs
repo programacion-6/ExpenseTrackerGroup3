@@ -12,10 +12,16 @@ namespace ExpenseTrackerGroup3.Services;
 public class UserService : IUserService
 {
     private readonly IUserRepository _userRepository;
+    private readonly IExpenseRepository _expenseRepository;
+    private readonly IIncomeRepository _incomeRepository;
+    private readonly IBudgetRepository _budgetRepository;
 
-    public UserService(IUserRepository userRepository)
+    public UserService(IUserRepository userRepository, IExpenseRepository expenseRepository, IIncomeRepository incomeRepository, IBudgetRepository budgetRepository)
     {
         _userRepository = userRepository;
+        _expenseRepository = expenseRepository;
+        _incomeRepository = incomeRepository;
+        _budgetRepository = budgetRepository;
     }
     
     public async Task<User?> GetUserProfileAsync(Guid userId)
@@ -36,4 +42,56 @@ public class UserService : IUserService
         
         return updatedUser;
     }
+
+    public async Task<IEnumerable<MonthlySummaryDTO>> GetMonthlySummaryAsync(Guid userId, DateTime startDate, DateTime endDate)
+    {
+        if (userId == Guid.Empty)
+        {
+            throw new ArgumentException("El ID de usuario no puede ser vacío", nameof(userId));
+        }
+
+        if (startDate.Year >= endDate.Year)
+        {
+            throw new ArgumentException("El año de inicio debe ser menor al año de fin", nameof(startDate));
+        }
+
+        if (startDate.Month >= endDate.Month)
+        {
+            throw new ArgumentException("El mes de inicio debe ser menor al mes de fin", nameof(startDate));
+        }
+
+        try
+        {
+            var monthlySummaries = new List<MonthlySummaryDTO>();
+
+            for (var year = startDate.Year; year <= endDate.Year; year++)
+            {
+                var startMonth = year == startDate.Year ? startDate.Month : 1;
+                var endMonth = year == endDate.Year ? endDate.Month : 12;
+
+                for (var month = startMonth; month <= endMonth; month++)
+                {
+                    IEnumerable<Income> incomes = await _incomeRepository.GetMonthlyIncomeByUserId(userId, new DateTime(year, month, 1));
+                    IEnumerable<Expense> expenses = await _expenseRepository.GetMonthlyExpenseByUserId(userId, new DateTime(year, month, 1));
+                    Budget? budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, new DateTime(year, month, 1));
+
+                    decimal totalIncome = incomes.Sum(income => income.Amount);
+                    decimal totalExpense = expenses.Sum(expense => expense.Amount);
+                    decimal totalBudget = budget?.BudgetAmount ?? 0;
+
+                    MonthlySummaryDTO summary = new(new DateTime(year, month, 1), totalIncome, totalExpense, totalBudget);
+
+                    monthlySummaries.Add(summary);
+                }
+            }
+
+            return monthlySummaries;
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Error al obtener el resumen mensual", ex);
+        }
+    }
+
+
 }
