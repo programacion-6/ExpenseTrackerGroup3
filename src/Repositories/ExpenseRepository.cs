@@ -132,4 +132,17 @@ public class ExpenseRepository : IExpenseRepository
         return affectedRows > 0;
     }
 
+
+    public async Task<IEnumerable<Expense>> GetMonthlyExpenseByUserId(Guid userId, DateTime date)
+    {
+        const string sql = @"
+        SELECT * FROM Expense
+        WHERE UserId = @UserId
+        AND EXTRACT(YEAR FROM CreatedAt) = @Year
+        AND EXTRACT(MONTH FROM CreatedAt) = @Month";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        
+        return await connection.QueryAsync<Expense>(sql, new { UserId = userId, Year = date.Year, Month = date.Month });
+    }
 }

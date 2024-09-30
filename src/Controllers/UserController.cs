@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 using Domain.DTOs;
 using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
@@ -30,4 +32,14 @@ public class UserController : ApiControllerBase
         var updatedUser = await _userService.UpdateUserProfileAsync(userId, user);
         return Ok(ResponseUser.FromDomain(updatedUser));
     }
+
+    [HttpGet("summary")]
+    public async Task<ActionResult<List<MonthlySummaryDTO>>> GetMonthlySummary([FromQuery] [Required] DateTime startMonth, [FromQuery] [Required] DateTime endMonth)
+    {
+        var userId = GetAuthenticatedUserId();
+
+        var monthlySummary = await _userService.GetMonthlySummaryAsync(userId, startMonth, endMonth);
+        
+        return Ok(monthlySummary);
+    }    
 }

@@ -8,4 +8,5 @@ public interface IExpenseRepository : IRepository<Expense>
     Task<DateTime> GetMostExpensiveMonthByUserId(Guid userId);
     Task<IEnumerable<Expense>> GetMonthlyExpensesAsync(Guid userId, DateTime month);
     Task<IEnumerable<Expense>> GetAllByUserId(Guid userId);
+    Task<IEnumerable<Expense>> GetMonthlyExpenseByUserId(Guid userId, DateTime date);
 }

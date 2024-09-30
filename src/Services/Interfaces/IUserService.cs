@@ -8,4 +8,5 @@ public interface IUserService
 {
     Task<User?> GetUserProfileAsync(Guid userId);
     Task<User> UpdateUserProfileAsync(Guid userId, UpdateUserDTO user);
+    Task<IEnumerable<MonthlySummaryDTO>> GetMonthlySummaryAsync(Guid userId, DateTime startDate, DateTime endDate);
 }

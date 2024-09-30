@@ -107,4 +107,17 @@ public class BudgetRepository : IBudgetRepository
         using var connection = await _dbConnection.CreateConnectionAsync();
         return await connection.QueryAsync<Budget>(sql, new { UserId = userId });
     }
+
+    public async Task<Budget?> GetBudgetForMonthAsync(Guid userId, DateTime date)
+    {
+        const string sql = @"
+            SELECT * FROM Budget
+            WHERE UserId = @UserId 
+            AND EXTRACT(MONTH FROM Month) = @Month
+            AND EXTRACT(YEAR FROM Month) = @Year
+        ";
+
+        using var connection = await _dbConnection.CreateConnectionAsync();
+        return await connection.QuerySingleOrDefaultAsync<Budget>(sql, new { UserId = userId, Month = date.Month, Year = date.Year });
+    }
 }
