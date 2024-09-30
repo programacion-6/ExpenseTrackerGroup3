@@ -1,4 +1,6 @@
 using ExpenseTrackerGroup3.Exceptions;
+using FluentValidation;
+using FluentValidation.Results;
 
 namespace ExpenseTrackerGroup3.Utils.Exception;
 
@@ -42,6 +44,14 @@ public static class ValidatorExtensions
         if (collection.Any())
         {
             throw new BadRequestException(message);
+        }
+    }
+
+    public static void ThrowIfValidationFailed(this ValidationResult validateResult)
+    {
+        if (!validateResult.IsValid)
+        {
+            throw new ValidationException(validateResult.Errors);
         }
     }
 }

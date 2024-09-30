@@ -9,6 +9,8 @@ using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Exception;
 using ExpenseTrackerGroup3.Utils.Hasher.Interfaces;
 using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
+using ExpenseTrackerGroup3.Validators.AuthValidator;
+
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -19,7 +21,11 @@ public class AuthService : IAuthService
     private readonly IJwtService _jwtService;
     private readonly IEmailSender _emailSender;
 
-    public AuthService(IUserRepository userRepository, IPasswordHasher passwordHasher, IJwtService jwtService, IEmailSender emailSender)
+    public AuthService(
+        IUserRepository userRepository,
+        IPasswordHasher passwordHasher,
+        IJwtService jwtService,
+        IEmailSender emailSender)
     {
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
@@ -29,6 +35,10 @@ public class AuthService : IAuthService
 
     public async Task<LoginResponse> LoginUserAsync(string email, string password)
     {
+        var loginValidator = new LoginValidator();
+        var validationResult = await loginValidator.ValidateAsync( new LoginRequest(email, password) );
+        validationResult.ThrowIfValidationFailed();
+
         var user = await _userRepository.GetByEmailAsync(email);
         user.ThrowIfNull("User not found");
 
@@ -44,6 +54,10 @@ public class AuthService : IAuthService
 
     public async Task<User> RegisterUserAsync(CreateUser user)
     {
+        var createValidator = new RegisterValidator();
+        var validationResult = await createValidator.ValidateAsync(user);
+        validationResult.ThrowIfValidationFailed();
+
         var existingUser = await _userRepository.GetByEmailAsync(user.Email);
         existingUser.ThrowIfExists("Registration could not be completed. Please check your information and try again.");
 
@@ -66,6 +80,10 @@ public class AuthService : IAuthService
 
     public async Task RequestResetPasswordAsync(RequestResetPassword request)
     {
+        var requestResetValidator = new EmailValidator();
+        var validationResult = await requestResetValidator.ValidateAsync(request);
+        validationResult.ThrowIfValidationFailed();
+
         var user = await _userRepository.GetByEmailAsync(request.Email);
         user.ThrowIfNull("User not found");
 
@@ -76,6 +94,10 @@ public class AuthService : IAuthService
 
     public async Task ResetPasswordAsync(ResetPassword reset)
     {
+        var resetPasswordValidator = new PasswordValidator();
+        var validationResult = await resetPasswordValidator.ValidateAsync(reset);
+        validationResult.ThrowIfValidationFailed();
+
         var email = _jwtService.ValidateToken(reset.Token, "resetPassword");
 
         var user = await _userRepository.GetByEmailAsync(email);

@@ -8,6 +8,7 @@ using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Exception;
 using ExpenseTrackerGroup3.Utils.NotifyMilestone.Interfaces;
+using ExpenseTrackerGroup3.Validators.GoalValidator;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -17,7 +18,10 @@ public class GoalService : IGoalService
     private readonly IUserRepository _userRepository;
     private readonly IGoalNotifyService _goalNotifyService;
 
-    public GoalService(IGoalRepository goalRepository, IUserRepository userRepository, IGoalNotifyService goalNotifyService)
+    public GoalService(
+        IGoalRepository goalRepository, 
+        IUserRepository userRepository, 
+        IGoalNotifyService goalNotifyService)
     {
         _goalRepository = goalRepository;
         _userRepository = userRepository;
@@ -26,6 +30,10 @@ public class GoalService : IGoalService
 
     public async Task<Goal> CreateGoalAsync(Guid userId, CreateGoal goal)
     {
+        var goalValidator = new GoalValidator();
+        var validationResult = await goalValidator.ValidateAsync(goal);
+        validationResult.ThrowIfValidationFailed();
+
         var userExists = await _userRepository.GetByIdAsync(userId);
         userExists.ThrowIfNull("User not found");
 
@@ -121,6 +129,10 @@ public class GoalService : IGoalService
 
     public async Task<Goal> UpdateGoalAsync(Guid userId, Guid goalId, CreateGoal goal)
     {
+        var goalValidator = new GoalValidator();
+        var validationResult = await goalValidator.ValidateAsync(goal);
+        validationResult.ThrowIfValidationFailed();
+           
         var userExists = await _userRepository.GetByIdAsync(userId);
         userExists.ThrowIfNull("User not found");
 

@@ -6,6 +6,8 @@ using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using ExpenseTrackerGroup3.Utils.Exception;
+using ExpenseTrackerGroup3.Validators.BudgetValidator;
+
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -15,7 +17,10 @@ public class BudgetService : IBudgetService
     private readonly IUserRepository _userRepository;
     private readonly IExpenseRepository _expenseRepository;
 
-    public BudgetService(IBudgetRepository budgetRepository, IUserRepository userRepository, IExpenseRepository expenseRepository)
+    public BudgetService(
+        IBudgetRepository budgetRepository,
+        IUserRepository userRepository,
+        IExpenseRepository expenseRepository)
     {
         _budgetRepository = budgetRepository;
         _userRepository = userRepository;
@@ -24,6 +29,10 @@ public class BudgetService : IBudgetService
 
     public async Task<Budget> AddBudgetAsync(Guid userId, CreateBudget budget)
     {
+        var budgetValidator = new BudgetValidator();
+        var validationResult = await budgetValidator.ValidateAsync(budget);
+        validationResult.ThrowIfValidationFailed();
+
         var user = await _userRepository.GetByIdAsync(userId);
         user.ThrowIfNull("User not found");
 
@@ -106,6 +115,10 @@ public class BudgetService : IBudgetService
 
     public async Task<Budget> UpdateBudgetAsync(Guid userId, CreateBudget budget)
     {
+        var budgetValidator = new BudgetValidator();
+        var validationResult = await budgetValidator.ValidateAsync(budget);
+        validationResult.ThrowIfValidationFailed();
+
         var existingBudget = await _userRepository.GetByIdAsync(userId);
         existingBudget.ThrowIfNull("User not found");
 
