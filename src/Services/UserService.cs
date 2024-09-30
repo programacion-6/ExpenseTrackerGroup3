@@ -96,7 +96,7 @@ public class UserService : IUserService
     private async Task<MonthlySummaryDTO?> GetMonthlySummary(Guid userId, int year, int month)
     {
         var date = new DateTime(year, month, 1);
-        var incomes = await _incomeRepository.GetMonthlyIncomeByUserId(userId, date);
+        var incomes = await _incomeRepository.GetMonthlyIncomeByUserId(userId, date.Year, date.Month);
         var expenses = await _expenseRepository.GetMonthlyExpenseByUserId(userId, date);
         var budget = await _budgetRepository.GetMonthlyBudgetByUserId(userId, date);
 
