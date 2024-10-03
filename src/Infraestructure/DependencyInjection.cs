@@ -11,6 +11,8 @@ using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Hasher.Interfaces;
 using ExpenseTrackerGroup3.Utils.Jwt;
 using ExpenseTrackerGroup3.Utils.Jwt.Interfaces;
+using ExpenseTrackerGroup3.Utils.NotifyMilestone;
+using ExpenseTrackerGroup3.Utils.NotifyMilestone.Interfaces;
 using ExpenseTrackerGroup3.Utils.Swagger;
 
 namespace ExpenseTrackerGroup3.Infraestructure;
@@ -55,6 +57,7 @@ public static class DependencyInjection
         services.AddScoped<IExpenseService, ExpenseService>();
         services.AddScoped<IGoalService, GoalService>();
         services.AddScoped<IIncomeService, IncomeService>();
+        services.AddScoped<IGoalNotifyService, GoalNotifyService>();
         return services;
     }
 
