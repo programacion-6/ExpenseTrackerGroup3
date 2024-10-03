@@ -1,4 +1,6 @@
 using Domain.DTOs;
+
+using ExpenseTrackerGroup3.Domain.DTOs;
 using ExpenseTrackerGroup3.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +24,7 @@ public class BudgetController : ApiControllerBase
         var userId = GetAuthenticatedUserId();
         var newBudget = await _budgetService.AddBudgetAsync(userId, budget);
         var response = ResponseBudget.FromDomain(newBudget);
-        return CreatedAtAction(nameof(GetMonthlyBudget), new { userId, month = budget.Month }, response);
+        return CreatedAtAction(nameof(GetMonthlyBudget), new { response.Month }, response);
     }
 
     [HttpGet("{month}")]
@@ -40,7 +42,7 @@ public class BudgetController : ApiControllerBase
     [ProducesResponseType(typeof(ResponseBudget), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> UpdateBudget([FromBody] CreateBudget budget) // Here add for BudgetId
+    public async Task<IActionResult> UpdateBudget([FromBody] CreateBudget budget)
     {
         var userId = GetAuthenticatedUserId();
         var updatedBudget = await _budgetService.UpdateBudgetAsync(userId, budget);
@@ -51,10 +53,10 @@ public class BudgetController : ApiControllerBase
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteBudget() // Here add for BudgetId
+    public async Task<IActionResult> DeleteBudget(Guid budgetId)
     { 
         var userId = GetAuthenticatedUserId();
-        await _budgetService.DeleteBudgetAsync(userId);
+        await _budgetService.DeleteBudgetAsync(userId, budgetId);
         const string succesfullyMessage = "Bugdet deleted succesfully";
         return Ok(succesfullyMessage);
     }
@@ -63,20 +65,20 @@ public class BudgetController : ApiControllerBase
     [HttpGet("remaining")]
     [ProducesResponseType(typeof(decimal), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetRemainingBudget() // Here add for BudgetId
+    public async Task<IActionResult> GetRemainingBudget()
     {
         var userId = GetAuthenticatedUserId();
         var remainingBudget = await _budgetService.GetRemainingBudgetAsync(userId);
-        return Ok(remainingBudget);
+        return Ok($"Current month remaining budget: {remainingBudget}");
     }
 
-    [HttpGet("{month}/status")]
-    [ProducesResponseType(typeof(bool), StatusCodes.Status200OK)]
+    [HttpGet("month/status")]
+    [ProducesResponseType(typeof(BudgetStatus), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CheckBudgetStatus(DateTime month) 
+    public async Task<IActionResult> CheckBudgetStatus() 
     {
         var userId = GetAuthenticatedUserId();
-        var status = await _budgetService.CheckBudgetStatusAsync(userId, month);
+        var status = await _budgetService.CheckBudgetStatusAsync(userId);
         return Ok(status);
     }
 }
