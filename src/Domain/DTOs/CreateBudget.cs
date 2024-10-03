@@ -4,7 +4,6 @@ namespace Domain.DTOs;
 
 public record CreateBudget
 (
-  DateTime Month,
   decimal BudgetAmount,
   decimal AlertThreshold
 )
@@ -13,7 +12,6 @@ public record CreateBudget
   {
     return new Budget
     {
-      Month = Month,
       BudgetAmount = BudgetAmount,
       AlertThreshold = AlertThreshold
     };

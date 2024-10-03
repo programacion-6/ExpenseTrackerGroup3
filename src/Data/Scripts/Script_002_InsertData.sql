@@ -1,15 +1,17 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 INSERT INTO users (id, name, email, passwordHash, createdAt) 
 VALUES
-('4a3a8e37-bd77-4266-aaee-de276f6b85e0', 'John Doe', 'john.doe@example.com', 'hash1', '2023-09-01'),
-('0c3c5fef-b022-45af-b1d2-2d9792dfcec8', 'Jane Smith', 'jane.smith@example.com', 'hash2', '2023-09-02'),
-('a5be0528-182b-4794-ae53-ec6b2b1fdb94', 'Mike Johnson', 'mike.johnson@example.com', 'hash3', '2023-09-03'),
-('bcec534b-ee13-4048-9298-82bbeae07aeb', 'Alice Brown', 'alice.brown@example.com', 'hash4', '2023-09-04'),
-('6c6ae333-0665-4df3-b95a-bcb8b3d50a35', 'Bob White', 'bob.white@example.com', 'hash5', '2023-09-05'),
-('7e9d4c13-64fc-472c-9389-6bbb7dab80ee', 'Emma Davis', 'emma.davis@example.com', 'hash6', '2023-09-06'),
-('344f5819-7820-4a84-a451-058b5489d4d8', 'Chris Taylor', 'chris.taylor@example.com', 'hash7', '2023-09-07'),
-('a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', 'Sophia Miller', 'sophia.miller@example.com', 'hash8', '2023-09-08'),
-('27e1afb8-3212-407e-8792-0717b535b0e7', 'Liam Wilson', 'liam.wilson@example.com', 'hash9', '2023-09-09'),
-('11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', 'Olivia Martinez', 'olivia.martinez@example.com', 'hash10', '2023-09-10')
+('4a3a8e37-bd77-4266-aaee-de276f6b85e0', 'John Doe', 'john.doe@example.com', crypt('hash1', gen_salt('bf')), '2023-09-01'),
+('0c3c5fef-b022-45af-b1d2-2d9792dfcec8', 'Jane Smith', 'jane.smith@example.com', crypt('hash2', gen_salt('bf')), '2023-09-02'),
+('a5be0528-182b-4794-ae53-ec6b2b1fdb94', 'Mike Johnson', 'mike.johnson@example.com', crypt('hash3', gen_salt('bf')), '2023-09-03'),
+('bcec534b-ee13-4048-9298-82bbeae07aeb', 'Alice Brown', 'alice.brown@example.com', crypt('hash4', gen_salt('bf')), '2023-09-04'),
+('6c6ae333-0665-4df3-b95a-bcb8b3d50a35', 'Bob White', 'bob.white@example.com', crypt('hash5', gen_salt('bf')), '2023-09-05'),
+('7e9d4c13-64fc-472c-9389-6bbb7dab80ee', 'Emma Davis', 'emma.davis@example.com', crypt('hash6', gen_salt('bf')), '2023-09-06'),
+('344f5819-7820-4a84-a451-058b5489d4d8', 'Chris Taylor', 'chris.taylor@example.com', crypt('hash7', gen_salt('bf')), '2023-09-07'),
+('a69ac8c6-bf9e-4ea8-97b5-b7fda6faa918', 'Sophia Miller', 'sophia.miller@example.com', crypt('hash8', gen_salt('bf')), '2023-09-08'),
+('27e1afb8-3212-407e-8792-0717b535b0e7', 'Liam Wilson', 'liam.wilson@example.com', crypt('hash9', gen_salt('bf')), '2023-09-09'),
+('11948d4d-02c3-4ac3-b689-47a4b0a1f9a7', 'Olivia Martinez', 'olivia.martinez@example.com', crypt('hash10', gen_salt('bf')), '2023-09-10')
 ON CONFLICT (id) DO NOTHING;
 
 INSERT INTO Expense (id, userId, amount, description, category, date, createdAt, recurringExpense) 
