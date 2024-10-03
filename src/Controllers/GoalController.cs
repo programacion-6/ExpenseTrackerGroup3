@@ -70,7 +70,7 @@ public class GoalController : ApiControllerBase
     {
         var userId = GetAuthenticatedUserId();
         var progress = await _goalService.TrackGoalProgressAsync(userId, goalId);
-        return Ok(progress);
+        return Ok($"Current goal progress: {progress}%");
     }
 
     [HttpPut("{goalId}/{amount}/progress")]

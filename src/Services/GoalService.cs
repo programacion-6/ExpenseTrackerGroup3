@@ -5,7 +5,9 @@ using Domain.Entities;
 using ExpenseTrackerGroup3.Exceptions;
 using ExpenseTrackerGroup3.Repositories.Interfaces;
 using ExpenseTrackerGroup3.Services.Interfaces;
+using ExpenseTrackerGroup3.Utils.EmailSender;
 using ExpenseTrackerGroup3.Utils.Exception;
+using ExpenseTrackerGroup3.Utils.NotifyMilestone.Interfaces;
 
 namespace ExpenseTrackerGroup3.Services;
 
@@ -13,11 +15,13 @@ public class GoalService : IGoalService
 {
     private readonly IGoalRepository _goalRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IGoalNotifyService _goalNotifyService;
 
-    public GoalService(IGoalRepository goalRepository, IUserRepository userRepository)
+    public GoalService(IGoalRepository goalRepository, IUserRepository userRepository, IGoalNotifyService goalNotifyService)
     {
         _goalRepository = goalRepository;
         _userRepository = userRepository;
+        _goalNotifyService = goalNotifyService;
     }
 
     public async Task<Goal> CreateGoalAsync(Guid userId, CreateGoal goal)
@@ -31,7 +35,7 @@ public class GoalService : IGoalService
             UserId = userId,
             GoalAmount = goal.GoalAmount,
             DeadLine = goal.DeadLine,
-            CurrentAmount = goal.CurrentAmount, 
+            CurrentAmount = goal.CurrentAmount,
             CreatedAt = DateTime.Now
         };
 
@@ -47,7 +51,7 @@ public class GoalService : IGoalService
         userExists.ThrowIfNull("User not found");
 
         var goalExists = await _goalRepository.GetByIdAsync(goalId);
-        if (goalExists == null || goalExists.UserId != userId )
+        if (goalExists == null || goalExists.UserId != userId)
         {
             throw new BadRequestException("This goal does not exist or Goal belongs to another user");
         }
@@ -58,8 +62,8 @@ public class GoalService : IGoalService
     public async Task<IEnumerable<Goal>> GetActiveGoalsAsync(Guid userId)
     {
         var userExists = await _userRepository.GetByIdAsync(userId);
-        userExists.ThrowIfNull("User not found");   
-        
+        userExists.ThrowIfNull("User not found");
+
         return await _goalRepository.GetActiveGoalsByUserIdAsync(userId);
     }
 
@@ -91,7 +95,8 @@ public class GoalService : IGoalService
             throw new BadRequestException("This goal does not exist or belongs to another user");
         }
 
-        return await _goalRepository.GetGoalProgressAsync(goalId);
+        var goalProgress = await _goalRepository.GetGoalProgressAsync(goalId);
+        return goalProgress < 100 ? goalProgress : 100;
     }
 
     public async Task<Goal> UpdateGoalProgressAsync(Guid userId, Guid goalId, decimal amount)
@@ -106,8 +111,11 @@ public class GoalService : IGoalService
         }
 
         goal.CurrentAmount += amount;
-
         await _goalRepository.UpdateAsync(goal);
+
+        var goalProgress = goal.CurrentAmount / goal.GoalAmount * 100;
+        await NotifyUserOnMilestoneAsync(userExists, goalProgress, goal);
+
         return goal;
     }
 
@@ -131,5 +139,10 @@ public class GoalService : IGoalService
         success.ThrowIfOperationFailed("Failed to update goal");
 
         return existingGoal;
+    }
+
+    private async Task NotifyUserOnMilestoneAsync(User user, decimal goalProgress, Goal goal)
+    {
+        await _goalNotifyService.NotifyUserOnMilestoneAsync(user, goalProgress, goal);
     }
 }
